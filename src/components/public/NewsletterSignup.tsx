@@ -20,21 +20,29 @@ export function NewsletterSignup({ variant = "banner" }: NewsletterSignupProps) 
   }
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between gap-6">
-      <h2 className="font-serif text-3xl md:text-4xl font-bold">
-        Your weekly hair edit.
-      </h2>
-      <form className="flex gap-3 w-full md:w-auto" onSubmit={(e) => e.preventDefault()}>
+    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
+      <div>
+        <h2 className="font-serif text-3xl md:text-4xl font-bold text-charcoal">
+          Your weekly hair edit.
+        </h2>
+        <p className="text-gray-500 mt-2 text-sm max-w-md">
+          The best new cuts, colors, and care tips — delivered every Sunday.
+        </p>
+      </div>
+      <form
+        className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto"
+        onSubmit={(e) => e.preventDefault()}
+      >
         <input
           type="email"
           placeholder="Enter your email"
-          className="flex-1 md:w-72 px-4 py-3 rounded-lg bg-white border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-plum/30"
+          className="flex-1 sm:w-72 px-5 py-3.5 rounded-xl bg-white border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-plum/20 shadow-sm"
         />
         <button
           type="submit"
-          className="px-6 py-3 bg-charcoal text-white rounded-lg text-sm font-medium hover:bg-plum transition-colors whitespace-nowrap"
+          className="px-8 py-3.5 bg-charcoal text-white rounded-xl text-sm font-semibold hover:bg-plum transition-colors whitespace-nowrap"
         >
-          Sign Up
+          Join
         </button>
       </form>
     </div>

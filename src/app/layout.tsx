@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
+import { SITE } from "@/lib/navigation";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -15,9 +16,11 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Hair Club — Your Weekly Hair Edit",
-  description:
-    "Beauty advice that feels inspiring—and genuinely useful. Hairstyles, hair color, and hair care tips from experts.",
+  title: {
+    default: `${SITE.name} — ${SITE.tagline}`,
+    template: `%s — ${SITE.name}`,
+  },
+  description: SITE.description,
 };
 
 export default function RootLayout({

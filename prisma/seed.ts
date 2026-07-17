@@ -51,7 +51,7 @@ async function main() {
       email: "author@hairclub.com",
       password: "hashed_password_placeholder",
       role: "author",
-      avatar: IMAGES.avatar4,
+      avatar: IMAGES.lookBuzz,
       bio: "Celebrity stylist and hair color specialist.",
     },
   });
