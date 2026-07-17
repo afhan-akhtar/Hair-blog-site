@@ -1,9 +1,20 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSession, sanitizePostStatus } from "@/lib/auth";
 
 export async function GET() {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const where =
+    session.role === "collaborator"
+      ? { deletedAt: null, status: "draft", authorId: session.id }
+      : { deletedAt: null };
+
   const posts = await prisma.post.findMany({
-    where: { deletedAt: null },
+    where,
     include: { category: true, author: true },
     orderBy: { updatedAt: "desc" },
   });
@@ -11,7 +22,13 @@ export async function GET() {
 }
 
 export async function POST(request: NextRequest) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const body = await request.json();
+  const status = sanitizePostStatus(session.role, body.status);
 
   const existing = await prisma.post.findUnique({ where: { slug: body.slug } });
   if (existing) {
@@ -29,10 +46,10 @@ export async function POST(request: NextRequest) {
       featuredImageCaption: body.featuredImageCaption || null,
       featuredImageCredit: body.featuredImageCredit || null,
       content: JSON.stringify(body.content || []),
-      status: body.status || "draft",
+      status,
       visibility: body.visibility || "public",
       categoryId: body.categoryId || null,
-      authorId: body.authorId || null,
+      authorId: session.role === "collaborator" ? session.id : body.authorId || session.id,
       tags: JSON.stringify(body.tags || []),
       focusKeyword: body.focusKeyword || null,
       seoTitle: body.seoTitle || null,
@@ -47,8 +64,8 @@ export async function POST(request: NextRequest) {
       pinterestImage: body.pinterestImage || null,
       schemaType: body.schemaType || "article",
       seoScore: body.seoScore || 0,
-      publishedAt: body.status === "published" ? new Date() : null,
-      scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
+      publishedAt: status === "published" ? new Date() : null,
+      scheduledAt: status === "scheduled" && body.scheduledAt ? new Date(body.scheduledAt) : null,
     },
   });
 

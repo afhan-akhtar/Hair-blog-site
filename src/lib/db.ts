@@ -12,6 +12,7 @@ function createPrismaClient() {
     password: process.env.DB_PASSWORD || "hairblog123",
     database: process.env.DB_NAME || "hair_blog",
     connectionLimit: 10,
+    allowPublicKeyRetrieval: true,
   });
   return new PrismaClient({ adapter });
 }

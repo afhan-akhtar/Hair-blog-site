@@ -1,16 +1,30 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
+import { getSession, sanitizePostStatus } from "@/lib/auth";
 
 export async function GET(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
   const post = await prisma.post.findUnique({
     where: { id },
     include: { category: true, author: true },
   });
   if (!post) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  if (
+    session.role === "collaborator" &&
+    (post.status !== "draft" || post.authorId !== session.id)
+  ) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   return NextResponse.json(post);
 }
 
@@ -18,11 +32,25 @@ export async function PUT(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
   const body = await request.json();
 
   const existing = await prisma.post.findUnique({ where: { id } });
   if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  if (
+    session.role === "collaborator" &&
+    (existing.status !== "draft" || existing.authorId !== session.id)
+  ) {
+    return NextResponse.json({ error: "You can only edit your own drafts" }, { status: 403 });
+  }
+
+  const status = sanitizePostStatus(session.role, body.status);
 
   if (body.slug !== existing.slug) {
     const slugTaken = await prisma.post.findFirst({
@@ -57,10 +85,11 @@ export async function PUT(
       featuredImageCaption: body.featuredImageCaption || null,
       featuredImageCredit: body.featuredImageCredit || null,
       content: JSON.stringify(body.content || []),
-      status: body.status || "draft",
+      status,
       visibility: body.visibility || "public",
       categoryId: body.categoryId || null,
-      authorId: body.authorId || null,
+      authorId:
+        session.role === "collaborator" ? session.id : body.authorId || existing.authorId,
       tags: JSON.stringify(body.tags || []),
       focusKeyword: body.focusKeyword || null,
       seoTitle: body.seoTitle || null,
@@ -76,10 +105,8 @@ export async function PUT(
       schemaType: body.schemaType || "article",
       seoScore: body.seoScore || 0,
       publishedAt:
-        body.status === "published" && !existing.publishedAt
-          ? new Date()
-          : existing.publishedAt,
-      scheduledAt: body.scheduledAt ? new Date(body.scheduledAt) : null,
+        status === "published" && !existing.publishedAt ? new Date() : existing.publishedAt,
+      scheduledAt: status === "scheduled" && body.scheduledAt ? new Date(body.scheduledAt) : null,
     },
   });
 
@@ -90,7 +117,22 @@ export async function DELETE(
   _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const session = await getSession();
+  if (!session) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   const { id } = await params;
+  const existing = await prisma.post.findUnique({ where: { id } });
+  if (!existing) return NextResponse.json({ error: "Not found" }, { status: 404 });
+
+  if (
+    session.role === "collaborator" &&
+    (existing.status !== "draft" || existing.authorId !== session.id)
+  ) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
   await prisma.post.update({
     where: { id },
     data: { status: "trash", deletedAt: new Date() },

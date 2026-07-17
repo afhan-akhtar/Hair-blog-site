@@ -31,7 +31,7 @@ export interface ContentBlock {
 
 export type PostStatus = "draft" | "review" | "scheduled" | "published" | "private" | "trash";
 export type PostVisibility = "public" | "private";
-export type UserRole = "administrator" | "editor" | "author";
+export type UserRole = "administrator" | "collaborator" | "editor" | "author";
 export type SchemaType = "article" | "howto" | "faq" | "productReview" | "none";
 
 export const BLOCK_LABELS: Record<BlockType, string> = {

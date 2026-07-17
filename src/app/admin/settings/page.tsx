@@ -1,14 +1,21 @@
 import { prisma } from "@/lib/db";
+import { getSession } from "@/lib/auth";
+import { PasswordChangeForm } from "@/components/admin/PasswordChangeForm";
+import { KeyRound, Globe } from "lucide-react";
 
 export default async function SettingsPage() {
-  const settings = await prisma.siteSetting.findMany();
+  const session = await getSession();
+  const isAdmin = session?.role === "administrator";
+
+  const settings = isAdmin ? await prisma.siteSetting.findMany() : [];
   const settingsMap = Object.fromEntries(settings.map((s) => [s.key, s.value]));
 
   const sections = [
     {
       title: "General SEO",
+      icon: Globe,
       fields: [
-        { key: "site_title", label: "Site Title", value: settingsMap.site_title || "Hair Club" },
+        { key: "site_title", label: "Site Title", value: settingsMap.site_title || "The Hair Edit" },
         { key: "site_description", label: "Site Description", value: settingsMap.site_description || "" },
         { key: "google_analytics", label: "Google Analytics ID", value: settingsMap.google_analytics || "" },
       ],
@@ -16,7 +23,7 @@ export default async function SettingsPage() {
     {
       title: "Publisher Details",
       fields: [
-        { key: "publisher_name", label: "Publisher Name", value: settingsMap.publisher_name || "Hair Club" },
+        { key: "publisher_name", label: "Publisher Name", value: settingsMap.publisher_name || "The Hair Edit" },
         { key: "publisher_logo", label: "Publisher Logo URL", value: settingsMap.publisher_logo || "" },
       ],
     },
@@ -31,32 +38,48 @@ export default async function SettingsPage() {
   ];
 
   return (
-    <div className="p-6">
-      <h1 className="admin-section-title mb-6">Site Settings</h1>
+    <div className="p-6 lg:p-8 max-w-3xl mx-auto">
+      <div className="mb-8">
+        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
+        <p className="text-gray-500 mt-1">Manage your account and site preferences</p>
+      </div>
 
-      <div className="space-y-6 max-w-2xl">
-        {sections.map((section) => (
-          <div key={section.title} className="admin-card p-5">
-            <h2 className="font-semibold text-admin-blue mb-4">{section.title}</h2>
-            <div className="space-y-4">
-              {section.fields.map((field) => (
-                <div key={field.key}>
-                  <label className="text-xs uppercase tracking-wider text-gray-500 mb-1 block font-medium">
-                    {field.label}
-                  </label>
-                  <input
-                    type="text"
-                    defaultValue={field.value}
-                    className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-admin-blue/30"
-                  />
-                </div>
-              ))}
+      <div className="space-y-6">
+        <div className="admin-card p-6">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <KeyRound className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="font-semibold text-gray-900">Change Password</h2>
+              <p className="text-sm text-gray-500">Update your login credentials</p>
             </div>
           </div>
-        ))}
-        <button className="px-6 py-2.5 bg-admin-blue text-white rounded-lg text-sm font-medium hover:bg-admin-blue-dark">
-          Save Settings
-        </button>
+          <PasswordChangeForm />
+        </div>
+
+        {isAdmin &&
+          sections.map((section) => (
+            <div key={section.title} className="admin-card p-6">
+              <h2 className="font-semibold text-gray-900 mb-4">{section.title}</h2>
+              <div className="space-y-4">
+                {section.fields.map((field) => (
+                  <div key={field.key}>
+                    <label className="admin-label">{field.label}</label>
+                    <input
+                      type="text"
+                      defaultValue={field.value}
+                      className="admin-input"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))}
+
+        {isAdmin && (
+          <button className="admin-btn-primary">Save Site Settings</button>
+        )}
       </div>
     </div>
   );

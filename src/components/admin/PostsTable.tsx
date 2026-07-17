@@ -33,9 +33,10 @@ interface PostsTableProps {
   posts: PostRow[];
   categories: { id: string; name: string }[];
   users: { id: string; name: string }[];
+  canPublish?: boolean;
 }
 
-export function PostsTable({ posts, categories, users }: PostsTableProps) {
+export function PostsTable({ posts, categories, users, canPublish = true }: PostsTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [selected, setSelected] = useState<string[]>([]);
@@ -122,8 +123,12 @@ export function PostsTable({ posts, categories, users }: PostsTableProps) {
         </select>
         {selected.length > 0 && (
           <div className="flex gap-2">
-            <button onClick={() => handleBulkAction("publish")} className="px-3 py-2 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100">Publish</button>
-            <button onClick={() => handleBulkAction("draft")} className="px-3 py-2 text-sm bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">Move to Draft</button>
+            {canPublish && (
+              <button onClick={() => handleBulkAction("publish")} className="px-3 py-2 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100">Publish</button>
+            )}
+            {canPublish && (
+              <button onClick={() => handleBulkAction("draft")} className="px-3 py-2 text-sm bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">Move to Draft</button>
+            )}
             <button onClick={() => handleBulkAction("trash")} className="px-3 py-2 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100">Trash</button>
           </div>
         )}

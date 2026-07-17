@@ -1,6 +1,7 @@
 import "dotenv/config";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaMariaDb } from "@prisma/adapter-mariadb";
+import bcrypt from "bcryptjs";
 import { IMAGES } from "../src/lib/images";
 
 const adapter = new PrismaMariaDb({
@@ -10,9 +11,14 @@ const adapter = new PrismaMariaDb({
   password: process.env.DB_PASSWORD || "hairblog123",
   database: process.env.DB_NAME || "hair_blog",
   connectionLimit: 5,
+  allowPublicKeyRetrieval: true,
 });
 
 const prisma = new PrismaClient({ adapter });
+
+async function hash(password: string) {
+  return bcrypt.hash(password, 12);
+}
 
 async function main() {
   await prisma.redirect.deleteMany();
@@ -23,36 +29,31 @@ async function main() {
   await prisma.user.deleteMany();
   await prisma.siteSetting.deleteMany();
 
+  const adminPassword = await hash("password");
+
   const admin = await prisma.user.create({
     data: {
-      name: "Gabrielle Hurwitz",
-      email: "admin@hairclub.com",
-      password: "hashed_password_placeholder",
+      username: "admin",
+      name: "Admin",
+      email: "admin@hairedit.com",
+      password: adminPassword,
       role: "administrator",
       avatar: IMAGES.authorAvatar,
-      bio: "Beauty editor with over 10 years of experience covering hair trends.",
+      bio: "Site administrator.",
     },
   });
 
-  await prisma.user.create({
+  const collaboratorPassword = await hash("password");
+
+  const collaborator = await prisma.user.create({
     data: {
-      name: "Sarah Chen",
-      email: "editor@hairclub.com",
-      password: "hashed_password_placeholder",
-      role: "editor",
+      username: "jane",
+      name: "Jane Collaborator",
+      email: "jane@hairedit.com",
+      password: collaboratorPassword,
+      role: "collaborator",
       avatar: IMAGES.expertAvatar,
-      bio: "Board-certified dermatologist specializing in hair and scalp health.",
-    },
-  });
-
-  const author = await prisma.user.create({
-    data: {
-      name: "Jamie Cook",
-      email: "author@hairclub.com",
-      password: "hashed_password_placeholder",
-      role: "author",
-      avatar: IMAGES.lookBuzz,
-      bio: "Celebrity stylist and hair color specialist.",
+      bio: "Content collaborator — drafts only.",
     },
   });
 
@@ -117,7 +118,7 @@ async function main() {
     { title: "Warm Brunette Shades That Look Expensive", slug: "warm-brunette-shades", excerpt: "Rich brunette tones.", featuredImage: IMAGES.heroSecondary1, categoryId: categories[1].id, status: "published", seoScore: 85, traffic: 8320, seoTitle: "Warm Brunette Shades", metaDescription: "Rich brunette hair color ideas.", focusKeyword: "warm brunette" },
     { title: "A Simple Guide to Realistic Synthetic Hair", slug: "synthetic-hair-guide", excerpt: "Synthetic hair guide.", featuredImage: IMAGES.heroSecondary2, categoryId: categories[6].id, status: "published", seoScore: 78, traffic: 5670 },
     { title: "How to Repair Damaged Hair in 4 Weeks", slug: "repair-damaged-hair", excerpt: "Repair routine.", featuredImage: IMAGES.story1, categoryId: categories[2].id, status: "published", seoScore: 88, traffic: 9100 },
-    { title: "Best Leave-In Conditioners for Curly Hair", slug: "leave-in-conditioners-curly", excerpt: "Top picks.", featuredImage: IMAGES.story2, categoryId: categories[2].id, status: "draft", seoScore: 45, traffic: 0 },
+    { title: "Best Leave-In Conditioners for Curly Hair", slug: "leave-in-conditioners-curly", excerpt: "Top picks.", featuredImage: IMAGES.story2, categoryId: categories[2].id, status: "draft", seoScore: 45, traffic: 0, authorId: collaborator.id },
     { title: "Balayage vs. Highlights", slug: "balayage-vs-highlights", excerpt: "Which is right?", featuredImage: IMAGES.story3, categoryId: categories[1].id, status: "review", seoScore: 55, traffic: 0 },
   ];
 
@@ -126,7 +127,7 @@ async function main() {
       data: {
         ...post,
         content: "[]",
-        authorId: author.id,
+        authorId: post.authorId || admin.id,
         visibility: "public",
         publishedAt: post.status === "published" ? new Date() : null,
         tags: "[]",

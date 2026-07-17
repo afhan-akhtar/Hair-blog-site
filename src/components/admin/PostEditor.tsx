@@ -48,11 +48,13 @@ interface PostEditorProps {
   post?: PostData;
   categories: Category[];
   users: User[];
+  canPublish?: boolean;
+  currentUserId?: string;
 }
 
 type SidebarSection = "publishing" | "organization" | "featured" | "seo" | "social" | "schema";
 
-export function PostEditor({ post, categories, users }: PostEditorProps) {
+export function PostEditor({ post, categories, users, canPublish = true, currentUserId }: PostEditorProps) {
   const router = useRouter();
   const isEditing = !!post;
 
@@ -67,7 +69,7 @@ export function PostEditor({ post, categories, users }: PostEditorProps) {
   const [status, setStatus] = useState<PostStatus>((post?.status as PostStatus) || "draft");
   const [visibility, setVisibility] = useState<PostVisibility>((post?.visibility as PostVisibility) || "public");
   const [categoryId, setCategoryId] = useState(post?.categoryId || "");
-  const [authorId, setAuthorId] = useState(post?.authorId || "");
+  const [authorId, setAuthorId] = useState(post?.authorId || currentUserId || "");
   const [tags, setTags] = useState(parseTags(post?.tags || "[]").join(", "));
   const [focusKeyword, setFocusKeyword] = useState(post?.focusKeyword || "");
   const [seoTitle, setSeoTitle] = useState(post?.seoTitle || "");
@@ -106,11 +108,12 @@ export function PostEditor({ post, categories, users }: PostEditorProps) {
   const handleSave = useCallback(async (saveStatus?: PostStatus) => {
     setSaving(true);
     try {
+      const effectiveStatus = canPublish ? (saveStatus || status) : "draft";
       const payload = {
         title, slug, excerpt, featuredImage,
         featuredImageAlt, featuredImageTitle, featuredImageCaption, featuredImageCredit,
         content: blocks,
-        status: saveStatus || status,
+        status: effectiveStatus,
         visibility,
         categoryId: categoryId || null,
         authorId: authorId || null,
@@ -145,7 +148,7 @@ export function PostEditor({ post, categories, users }: PostEditorProps) {
     categoryId, authorId, tags, focusKeyword, seoTitle, metaDescription,
     canonicalUrl, robots, breadcrumbTitle, inSitemap, socialTitle,
     socialDescription, socialImage, pinterestImage, schemaType, scheduledAt,
-    seoCheck.score, isEditing, post, router]);
+    seoCheck.score, isEditing, post, router, canPublish, status]);
 
   const sidebarSections: { key: SidebarSection; label: string }[] = [
     { key: "publishing", label: "Publishing" },
@@ -184,18 +187,20 @@ export function PostEditor({ post, categories, users }: PostEditorProps) {
           <button
             onClick={() => handleSave("draft")}
             disabled={saving}
-            className="px-4 py-2 text-sm border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+            className="admin-btn-secondary"
           >
             Save Draft
           </button>
-          <button
-            onClick={() => handleSave()}
-            disabled={saving || !title}
-            className="flex items-center gap-2 px-4 py-2 bg-admin-blue text-white rounded-lg text-sm font-medium hover:bg-admin-blue-dark transition-colors disabled:opacity-50"
-          >
-            <Save className="w-4 h-4" />
-            {saving ? "Saving..." : status === "published" ? "Update" : "Publish"}
-          </button>
+          {canPublish && (
+            <button
+              onClick={() => handleSave("published")}
+              disabled={saving || !title}
+              className="admin-btn-primary flex items-center gap-2"
+            >
+              <Save className="w-4 h-4" />
+              {saving ? "Saving..." : status === "published" ? "Update" : "Publish"}
+            </button>
+          )}
         </div>
       </div>
 
@@ -245,27 +250,35 @@ export function PostEditor({ post, categories, users }: PostEditorProps) {
           <div className="p-4 space-y-4">
             {activeSection === "publishing" && (
               <>
-                <div>
-                  <label className={labelClass}>Status</label>
-                  <select value={status} onChange={(e) => setStatus(e.target.value as PostStatus)} className={inputClass}>
-                    <option value="draft">Draft</option>
-                    <option value="review">Pending Review</option>
-                    <option value="scheduled">Scheduled</option>
-                    <option value="published">Published</option>
-                    <option value="private">Private</option>
-                  </select>
-                </div>
-                <div>
-                  <label className={labelClass}>Visibility</label>
-                  <select value={visibility} onChange={(e) => setVisibility(e.target.value as PostVisibility)} className={inputClass}>
-                    <option value="public">Public</option>
-                    <option value="private">Private</option>
-                  </select>
-                </div>
-                {status === "scheduled" && (
-                  <div>
-                    <label className={labelClass}>Schedule Date</label>
-                    <input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} className={inputClass} />
+                {canPublish ? (
+                  <>
+                    <div>
+                      <label className={labelClass}>Status</label>
+                      <select value={status} onChange={(e) => setStatus(e.target.value as PostStatus)} className={inputClass}>
+                        <option value="draft">Draft</option>
+                        <option value="review">Pending Review</option>
+                        <option value="scheduled">Scheduled</option>
+                        <option value="published">Published</option>
+                        <option value="private">Private</option>
+                      </select>
+                    </div>
+                    <div>
+                      <label className={labelClass}>Visibility</label>
+                      <select value={visibility} onChange={(e) => setVisibility(e.target.value as PostVisibility)} className={inputClass}>
+                        <option value="public">Public</option>
+                        <option value="private">Private</option>
+                      </select>
+                    </div>
+                    {status === "scheduled" && (
+                      <div>
+                        <label className={labelClass}>Schedule Date</label>
+                        <input type="datetime-local" value={scheduledAt} onChange={(e) => setScheduledAt(e.target.value)} className={inputClass} />
+                      </div>
+                    )}
+                  </>
+                ) : (
+                  <div className="bg-sky-50 border border-sky-100 rounded-lg p-3 text-sm text-sky-700">
+                    This post will be saved as a <strong>draft</strong>. An administrator will publish it.
                   </div>
                 )}
               </>
@@ -286,10 +299,14 @@ export function PostEditor({ post, categories, users }: PostEditorProps) {
                 </div>
                 <div>
                   <label className={labelClass}>Author</label>
-                  <select value={authorId} onChange={(e) => setAuthorId(e.target.value)} className={inputClass}>
-                    <option value="">Select author</option>
-                    {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
-                  </select>
+                  {canPublish ? (
+                    <select value={authorId} onChange={(e) => setAuthorId(e.target.value)} className={inputClass}>
+                      <option value="">Select author</option>
+                      {users.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
+                    </select>
+                  ) : (
+                    <p className="text-sm text-gray-600 py-2">{users.find((u) => u.id === authorId)?.name || "You"}</p>
+                  )}
                 </div>
               </>
             )}
