@@ -4,47 +4,121 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "mysql"
+}
+
+model User {
+  id        String   @id @default(cuid())
+  name      String
+  email     String   @unique
+  password  String
+  role      String   @default("author")
+  avatar    String?
+  bio       String?  @db.Text
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  posts     Post[]
+  media     Media[]
 }
 
 model Category {
-  id        String   @id @default(cuid())
-  name      String
-  slug      String   @unique
-  type      String   @default("hair")
-  createdAt DateTime @default(now())
-  posts     Post[]
-}
-
-model Author {
-  id        String   @id @default(cuid())
-  name      String
-  email     String?
-  avatar    String?
-  bio       String?
-  role      String   @default("writer")
-  createdAt DateTime @default(now())
-  posts     Post[]   @relation("AuthorPosts")
-  reviewed  Post[]   @relation("ReviewerPosts")
+  id              String     @id @default(cuid())
+  name            String
+  slug            String     @unique
+  description     String?    @db.Text
+  image           String?
+  seoTitle        String?
+  metaDescription String?    @db.Text
+  indexable       Boolean    @default(true)
+  type            String     @default("hair")
+  parentId        String?
+  parent          Category?  @relation("CategoryTree", fields: [parentId], references: [id])
+  children        Category[] @relation("CategoryTree")
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  posts           Post[]
 }
 
 model Post {
   id            String    @id @default(cuid())
   title         String
   slug          String    @unique
-  excerpt       String?
-  featuredImage String?
-  content       String    @default("[]")
+  excerpt       String?   @db.Text
+  content       String    @db.LongText
   status        String    @default("draft")
+  visibility    String    @default("public")
+  featuredImage String?
+  featuredImageAlt      String?
+  featuredImageTitle    String?
+  featuredImageCaption  String?
+  featuredImageCredit   String?
+  tags          String    @db.Text
+  focusKeyword  String?
+  seoTitle      String?
+  metaDescription String? @db.Text
+  canonicalUrl  String?
+  robots        String    @default("index,follow")
+  breadcrumbTitle String?
+  inSitemap     Boolean   @default(true)
+  socialTitle   String?
+  socialDescription String? @db.Text
+  socialImage   String?
+  pinterestImage String?
+  schemaType    String    @default("article")
   seoScore      Int       @default(0)
   traffic       Int       @default(0)
   publishedAt   DateTime?
+  scheduledAt   DateTime?
+  deletedAt     DateTime?
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
   categoryId    String?
   category      Category? @relation(fields: [categoryId], references: [id])
   authorId      String?
-  author        Author?   @relation("AuthorPosts", fields: [authorId], references: [id])
-  reviewerId    String?
-  reviewer      Author?   @relation("ReviewerPosts", fields: [reviewerId], references: [id])
+  author        User?     @relation(fields: [authorId], references: [id])
+  revisions     PostRevision[]
+  redirects     Redirect[]
+}
+
+model PostRevision {
+  id        String   @id @default(cuid())
+  postId    String
+  post      Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  title     String
+  content   String   @db.LongText
+  createdAt DateTime @default(now())
+}
+
+model Media {
+  id          String   @id @default(cuid())
+  filename    String
+  url         String
+  alt         String?
+  title       String?
+  caption     String?
+  description String?  @db.Text
+  credit      String?
+  mimeType    String?
+  fileSize    Int?
+  width       Int?
+  height      Int?
+  webpUrl     String?
+  uploadedById String?
+  uploadedBy  User?    @relation(fields: [uploadedById], references: [id])
+  createdAt   DateTime @default(now())
+}
+
+model Redirect {
+  id        String   @id @default(cuid())
+  fromPath  String   @unique
+  toPath    String
+  postId    String?
+  post      Post?    @relation(fields: [postId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
 }

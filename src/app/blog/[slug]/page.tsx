@@ -23,7 +23,6 @@ export default async function BlogPostPage({
     include: {
       category: true,
       author: true,
-      reviewer: true,
     },
   });
 
@@ -122,29 +121,6 @@ export default async function BlogPostPage({
 
           {/* Sidebar */}
           <aside className="space-y-8">
-            {post.reviewer && (
-              <div className="bg-white rounded-2xl p-6 border border-gray-100">
-                <div className="flex items-center gap-4 mb-4">
-                  {post.reviewer.avatar && (
-                    <Image
-                      src={post.reviewer.avatar}
-                      alt={post.reviewer.name}
-                      width={48}
-                      height={48}
-                      className="rounded-full"
-                    />
-                  )}
-                  <div>
-                    <p className="text-xs uppercase tracking-wider text-gray-500">Reviewed by</p>
-                    <p className="font-semibold">{post.reviewer.name}</p>
-                  </div>
-                </div>
-                {post.reviewer.bio && (
-                  <p className="text-sm text-gray-600">{post.reviewer.bio}</p>
-                )}
-              </div>
-            )}
-
             <NewsletterSignup variant="sidebar" />
 
             <div className="bg-white rounded-2xl p-6 border border-gray-100">

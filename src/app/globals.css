@@ -11,6 +11,9 @@
   --color-charcoal: #1a1a1a;
   --color-beige: #f5f0eb;
   --color-mint: #f0f4f2;
+  --color-admin-blue: #307fb1;
+  --color-admin-blue-dark: #256a94;
+  --color-admin-bg: #f4f6f9;
   --font-serif: var(--font-playfair);
   --font-sans: var(--font-inter);
 }
@@ -25,13 +28,46 @@ body {
   font-family: var(--font-serif), Georgia, serif;
 }
 
-/* Admin dark theme */
 .admin-theme {
-  background: #0a0a0a;
-  color: #ffffff;
+  background: var(--color-admin-bg);
+  color: #333;
 }
 
-/* Block editor styles */
+.admin-card {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+}
+
+.admin-table th {
+  background: var(--color-admin-blue);
+  color: white;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px 16px;
+  font-size: 13px;
+}
+
+.admin-table td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 14px;
+}
+
+.admin-table tr:nth-child(even) td {
+  background: #f8fafc;
+}
+
+.admin-table tr:hover td {
+  background: #eef4fa;
+}
+
+.admin-section-title {
+  color: var(--color-admin-blue);
+  font-weight: 700;
+  font-size: 1.25rem;
+}
+
 .block-editor textarea,
 .block-editor input {
   background: transparent;
@@ -41,12 +77,6 @@ body {
   resize: none;
 }
 
-.block-editor textarea:focus,
-.block-editor input:focus {
-  outline: none;
-}
-
-/* Prose for article content */
 .article-prose h2 {
   font-family: var(--font-serif), Georgia, serif;
   font-size: 1.75rem;
@@ -61,13 +91,6 @@ body {
   font-weight: 600;
   margin-top: 1.5rem;
   margin-bottom: 0.75rem;
-}
-
-.article-prose h4 {
-  font-size: 1.125rem;
-  font-weight: 600;
-  margin-top: 1.25rem;
-  margin-bottom: 0.5rem;
 }
 
 .article-prose p {
@@ -85,14 +108,9 @@ body {
   border-radius: 0 12px 12px 0;
 }
 
-.article-prose ul,
-.article-prose ol {
+.article-prose ul, .article-prose ol {
   margin: 1rem 0 1.5rem 1.5rem;
   line-height: 1.75;
-}
-
-.article-prose li {
-  margin-bottom: 0.5rem;
 }
 
 .article-prose img {
@@ -106,20 +124,27 @@ body {
   margin: 2rem 0;
 }
 
-.article-prose table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
+.quick-answer {
+  background: var(--color-mint);
+  border-left: 4px solid var(--color-admin-blue);
+  padding: 1.5rem;
+  border-radius: 0 12px 12px 0;
+  margin: 2rem 0;
 }
 
-.article-prose th,
-.article-prose td {
-  border: 1px solid #e5e5e5;
-  padding: 0.75rem 1rem;
-  text-align: left;
-}
-
-.article-prose th {
+.stylist-tip {
   background: var(--color-beige);
-  font-weight: 600;
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin: 2rem 0;
 }
+
+.pros-cons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin: 2rem 0;
+}
+
+.pros-cons .pros { background: #f0fdf4; padding: 1rem; border-radius: 8px; }
+.pros-cons .cons { background: #fef2f2; padding: 1rem; border-radius: 8px; }

@@ -7,6 +7,8 @@ import {
   BLOCK_LABELS,
   BLOCK_ICONS,
   createBlock,
+  STANDARD_BLOCKS,
+  CUSTOM_BLOCKS,
 } from "@/lib/types";
 import { GripVertical, Plus, Trash2, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -16,23 +18,7 @@ interface BlockEditorProps {
   onChange: (blocks: ContentBlock[]) => void;
 }
 
-const BLOCK_TYPES: BlockType[] = [
-  "paragraph",
-  "heading2",
-  "heading3",
-  "heading4",
-  "bulletList",
-  "numberedList",
-  "quote",
-  "button",
-  "divider",
-  "table",
-  "image",
-  "gallery",
-  "video",
-  "embed",
-  "html",
-];
+const BLOCK_TYPES = [...STANDARD_BLOCKS, ...CUSTOM_BLOCKS];
 
 export function BlockEditor({ blocks, onChange }: BlockEditorProps) {
   const [showInserter, setShowInserter] = useState(false);
@@ -114,14 +100,11 @@ export function BlockEditor({ blocks, onChange }: BlockEditorProps) {
       )}
 
       {blocks.length === 0 && !showInserter && (
-        <div className="text-center py-16 text-white/40">
+        <div className="text-center py-16 text-gray-400">
           <p className="mb-4">Start writing by adding a block</p>
           <button
-            onClick={() => {
-              setInsertIndex(0);
-              setShowInserter(true);
-            }}
-            className="px-4 py-2 bg-plum text-white rounded-lg text-sm"
+            onClick={() => { setInsertIndex(0); setShowInserter(true); }}
+            className="px-4 py-2 bg-admin-blue text-white rounded-lg text-sm"
           >
             Add Block
           </button>
@@ -137,7 +120,7 @@ function InserterButton({ onClick }: { onClick: () => void }) {
       onClick={onClick}
       className="w-full py-1 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity group"
     >
-      <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-plum/80 text-white text-xs opacity-0 group-hover:opacity-100 transition-opacity">
+      <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-admin-blue/10 text-admin-blue text-xs">
         <Plus className="w-3 h-3" /> Add block
       </span>
     </button>
@@ -152,22 +135,26 @@ function BlockInserter({
   onClose: () => void;
 }) {
   return (
-    <div className="bg-white/10 rounded-xl border border-white/20 p-4 my-2">
+    <div className="bg-blue-50 rounded-xl border border-blue-200 p-4 my-2">
       <div className="flex items-center justify-between mb-3">
-        <span className="text-sm font-medium text-white/70">Add a block</span>
-        <button onClick={onClose} className="text-white/40 hover:text-white text-sm">
-          Cancel
-        </button>
+        <span className="text-sm font-medium text-admin-blue">Add a block</span>
+        <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">Cancel</button>
       </div>
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-2">
-        {BLOCK_TYPES.map((type) => (
-          <button
-            key={type}
-            onClick={() => onSelect(type)}
-            className="flex flex-col items-center gap-1.5 p-3 rounded-lg hover:bg-white/10 transition-colors text-center"
-          >
+      <p className="text-xs text-gray-500 mb-2 font-medium">Standard Blocks</p>
+      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-3">
+        {STANDARD_BLOCKS.map((type) => (
+          <button key={type} onClick={() => onSelect(type)} className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-white transition-colors text-center border border-transparent hover:border-blue-200">
             <span className="text-lg">{BLOCK_ICONS[type]}</span>
-            <span className="text-xs text-white/70">{BLOCK_LABELS[type]}</span>
+            <span className="text-xs text-gray-600">{BLOCK_LABELS[type]}</span>
+          </button>
+        ))}
+      </div>
+      <p className="text-xs text-gray-500 mb-2 font-medium">Custom Blog Blocks</p>
+      <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+        {CUSTOM_BLOCKS.map((type) => (
+          <button key={type} onClick={() => onSelect(type)} className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-white transition-colors text-center border border-transparent hover:border-blue-200">
+            <span className="text-lg">{BLOCK_ICONS[type]}</span>
+            <span className="text-xs text-gray-600">{BLOCK_LABELS[type]}</span>
           </button>
         ))}
       </div>
@@ -198,7 +185,7 @@ function BlockItem({
     <div
       className={cn(
         "group relative rounded-lg border transition-colors",
-        focused ? "border-plum/50 bg-white/5" : "border-transparent hover:border-white/10"
+        focused ? "border-admin-blue/50 bg-blue-50/50" : "border-gray-100 hover:border-gray-200"
       )}
       onFocus={() => setFocused(true)}
       onBlur={() => setFocused(false)}
@@ -226,7 +213,7 @@ function BlockItem({
       </div>
 
       <div className="px-10 py-4">
-        <span className="text-xs text-white/30 uppercase tracking-wider mb-2 block">
+        <span className="text-xs text-gray-400 uppercase tracking-wider mb-2 block">
           {BLOCK_LABELS[block.type]}
         </span>
         <BlockFields block={block} onUpdate={onUpdate} />
@@ -251,7 +238,7 @@ function BlockFields({
           value={(data.text as string) || ""}
           onChange={(e) => onUpdate({ text: e.target.value })}
           placeholder="Start writing..."
-          className="text-white text-base leading-relaxed min-h-[60px]"
+          className="text-gray-900 text-base leading-relaxed min-h-[60px] w-full"
           rows={3}
         />
       );
@@ -266,7 +253,7 @@ function BlockFields({
           onChange={(e) => onUpdate({ text: e.target.value })}
           placeholder="Heading text"
           className={cn(
-            "text-white font-bold",
+            "text-gray-900 font-bold w-full",
             type === "heading2" && "text-2xl",
             type === "heading3" && "text-xl",
             type === "heading4" && "text-lg"
@@ -360,7 +347,7 @@ function BlockFields({
             placeholder="Caption (optional)"
             className="text-white/50 text-sm w-full"
           />
-          {data.src && (
+          {(data.src as string) && (
             <img
               src={data.src as string}
               alt={(data.alt as string) || ""}
@@ -441,9 +428,58 @@ function BlockFields({
           value={(data.code as string) || ""}
           onChange={(e) => onUpdate({ code: e.target.value })}
           placeholder="Custom HTML code..."
-          className="text-white/70 text-sm w-full font-mono"
+          className="text-gray-700 text-sm w-full font-mono border border-gray-200 rounded p-2"
           rows={5}
         />
+      );
+
+    case "quickAnswer":
+      return (
+        <div className="space-y-2">
+          <input type="text" value={(data.question as string) || ""} onChange={(e) => onUpdate({ question: e.target.value })} placeholder="Question" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <textarea value={(data.answer as string) || ""} onChange={(e) => onUpdate({ answer: e.target.value })} placeholder="Quick answer..." rows={3} className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+        </div>
+      );
+
+    case "stylistTip":
+      return (
+        <div className="space-y-2">
+          <textarea value={(data.tip as string) || ""} onChange={(e) => onUpdate({ tip: e.target.value })} placeholder="Stylist tip..." rows={2} className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <input type="text" value={(data.stylistName as string) || ""} onChange={(e) => onUpdate({ stylistName: e.target.value })} placeholder="Stylist name" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+        </div>
+      );
+
+    case "faq":
+      return (
+        <div className="space-y-2">
+          {((data.items as { question: string; answer: string }[]) || []).map((item, i) => (
+            <div key={i} className="border border-gray-200 rounded p-2 space-y-1">
+              <input type="text" value={item.question} onChange={(e) => { const items = [...(data.items as { question: string; answer: string }[])]; items[i] = { ...items[i], question: e.target.value }; onUpdate({ items }); }} placeholder="Question" className="text-gray-900 w-full text-sm" />
+              <textarea value={item.answer} onChange={(e) => { const items = [...(data.items as { question: string; answer: string }[])]; items[i] = { ...items[i], answer: e.target.value }; onUpdate({ items }); }} placeholder="Answer" rows={2} className="text-gray-700 w-full text-sm" />
+            </div>
+          ))}
+          <button onClick={() => onUpdate({ items: [...((data.items as { question: string; answer: string }[]) || []), { question: "", answer: "" }] })} className="text-sm text-admin-blue">+ Add FAQ item</button>
+        </div>
+      );
+
+    case "prosCons":
+      return (
+        <div className="space-y-2">
+          <input type="text" value={(data.title as string) || ""} onChange={(e) => onUpdate({ title: e.target.value })} placeholder="Title" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <ListEditor items={(data.pros as string[]) || [""]} onChange={(pros) => onUpdate({ pros })} ordered={false} />
+          <ListEditor items={(data.cons as string[]) || [""]} onChange={(cons) => onUpdate({ cons })} ordered={false} />
+        </div>
+      );
+
+    case "productRecommendation":
+      return (
+        <div className="space-y-2">
+          <input type="text" value={(data.name as string) || ""} onChange={(e) => onUpdate({ name: e.target.value })} placeholder="Product name" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <input type="text" value={(data.image as string) || ""} onChange={(e) => onUpdate({ image: e.target.value })} placeholder="Image URL" className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <textarea value={(data.description as string) || ""} onChange={(e) => onUpdate({ description: e.target.value })} placeholder="Description" rows={2} className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <input type="text" value={(data.price as string) || ""} onChange={(e) => onUpdate({ price: e.target.value })} placeholder="Price" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <input type="text" value={(data.url as string) || ""} onChange={(e) => onUpdate({ url: e.target.value })} placeholder="Product URL" className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+        </div>
       );
 
     default:
@@ -464,7 +500,7 @@ function ListEditor({
     <div className="space-y-1">
       {items.map((item, i) => (
         <div key={i} className="flex items-center gap-2">
-          <span className="text-white/30 w-4 text-sm">{ordered ? `${i + 1}.` : "•"}</span>
+          <span className="text-gray-400 w-4 text-sm">{ordered ? `${i + 1}.` : "•"}</span>
           <input
             type="text"
             value={item}
@@ -474,11 +510,11 @@ function ListEditor({
               onChange(newItems);
             }}
             placeholder="List item"
-            className="text-white flex-1"
+            className="text-gray-900 flex-1 border border-gray-200 rounded px-2 py-1 text-sm"
           />
           <button
             onClick={() => onChange(items.filter((_, j) => j !== i))}
-            className="text-white/30 hover:text-red-400"
+            className="text-gray-400 hover:text-red-500"
           >
             <Trash2 className="w-3 h-3" />
           </button>
@@ -486,7 +522,7 @@ function ListEditor({
       ))}
       <button
         onClick={() => onChange([...items, ""])}
-        className="text-sm text-plum hover:text-white transition-colors ml-6"
+        className="text-sm text-admin-blue ml-6"
       >
         + Add item
       </button>

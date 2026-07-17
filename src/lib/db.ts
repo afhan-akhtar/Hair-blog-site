@@ -1,11 +1,17 @@
+import "dotenv/config";
 import { PrismaClient } from "@/generated/prisma/client";
-import { PrismaBetterSqlite3 } from "@prisma/adapter-better-sqlite3";
+import { PrismaMariaDb } from "@prisma/adapter-mariadb";
 
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient };
 
 function createPrismaClient() {
-  const adapter = new PrismaBetterSqlite3({
-    url: process.env.DATABASE_URL ?? "file:./prisma/dev.db",
+  const adapter = new PrismaMariaDb({
+    host: process.env.DB_HOST || "localhost",
+    port: Number(process.env.DB_PORT || 3306),
+    user: process.env.DB_USER || "hairblog",
+    password: process.env.DB_PASSWORD || "hairblog123",
+    database: process.env.DB_NAME || "hair_blog",
+    connectionLimit: 10,
   });
   return new PrismaClient({ adapter });
 }

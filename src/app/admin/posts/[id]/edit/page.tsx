@@ -9,13 +9,19 @@ export default async function EditPostPage({
 }) {
   const { id } = await params;
 
-  const [post, categories, authors] = await Promise.all([
+  const [post, categories, users] = await Promise.all([
     prisma.post.findUnique({ where: { id } }),
     prisma.category.findMany({ orderBy: { name: "asc" } }),
-    prisma.author.findMany({ orderBy: { name: "asc" } }),
+    prisma.user.findMany({ orderBy: { name: "asc" } }),
   ]);
 
   if (!post) notFound();
 
-  return <PostEditor post={post} categories={categories} authors={authors} />;
+  const serialized = {
+    ...post,
+    publishedAt: post.publishedAt?.toISOString() || null,
+    scheduledAt: post.scheduledAt?.toISOString() || null,
+  };
+
+  return <PostEditor post={serialized} categories={categories} users={users} />;
 }

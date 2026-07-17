@@ -31,12 +31,16 @@ export function getSeoScoreColor(score: number): string {
 export function getStatusColor(status: string): string {
   switch (status) {
     case "published":
-      return "bg-green-500/20 text-green-400";
+      return "bg-green-100 text-green-700";
     case "review":
-      return "bg-yellow-500/20 text-yellow-400";
+      return "bg-yellow-100 text-yellow-700";
     case "scheduled":
-      return "bg-blue-500/20 text-blue-400";
+      return "bg-blue-100 text-blue-700";
+    case "private":
+      return "bg-purple-100 text-purple-700";
+    case "trash":
+      return "bg-red-100 text-red-700";
     default:
-      return "bg-gray-500/20 text-gray-400";
+      return "bg-gray-100 text-gray-600";
   }
 }

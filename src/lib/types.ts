@@ -13,7 +13,15 @@ export type BlockType =
   | "gallery"
   | "video"
   | "embed"
-  | "html";
+  | "html"
+  | "quickAnswer"
+  | "hairstyleCard"
+  | "stylistTip"
+  | "stepByStep"
+  | "faq"
+  | "prosCons"
+  | "relatedPosts"
+  | "productRecommendation";
 
 export interface ContentBlock {
   id: string;
@@ -21,21 +29,10 @@ export interface ContentBlock {
   data: Record<string, unknown>;
 }
 
-export type PostStatus = "draft" | "review" | "scheduled" | "published";
-
-export interface PostFormData {
-  title: string;
-  slug: string;
-  excerpt?: string;
-  featuredImage?: string;
-  content: ContentBlock[];
-  status: PostStatus;
-  categoryId?: string;
-  authorId?: string;
-  reviewerId?: string;
-  seoScore?: number;
-  publishedAt?: string;
-}
+export type PostStatus = "draft" | "review" | "scheduled" | "published" | "private" | "trash";
+export type PostVisibility = "public" | "private";
+export type UserRole = "administrator" | "editor" | "author";
+export type SchemaType = "article" | "howto" | "faq" | "productReview" | "none";
 
 export const BLOCK_LABELS: Record<BlockType, string> = {
   paragraph: "Paragraph",
@@ -53,6 +50,14 @@ export const BLOCK_LABELS: Record<BlockType, string> = {
   video: "Video",
   embed: "Embed",
   html: "HTML Block",
+  quickAnswer: "Quick Answer",
+  hairstyleCard: "Hairstyle Card",
+  stylistTip: "Stylist Tip",
+  stepByStep: "Step-by-Step Tutorial",
+  faq: "FAQ",
+  prosCons: "Pros and Cons",
+  relatedPosts: "Related Posts",
+  productRecommendation: "Product Recommendation",
 };
 
 export const BLOCK_ICONS: Record<BlockType, string> = {
@@ -71,7 +76,28 @@ export const BLOCK_ICONS: Record<BlockType, string> = {
   video: "▶",
   embed: "🔗",
   html: "</>",
+  quickAnswer: "⚡",
+  hairstyleCard: "💇",
+  stylistTip: "✂️",
+  stepByStep: "📋",
+  faq: "❓",
+  prosCons: "⚖",
+  relatedPosts: "📰",
+  productRecommendation: "🛍",
 };
+
+const STANDARD_BLOCKS: BlockType[] = [
+  "paragraph", "heading2", "heading3", "heading4",
+  "bulletList", "numberedList", "quote", "button",
+  "divider", "table", "image", "gallery", "video", "embed", "html",
+];
+
+const CUSTOM_BLOCKS: BlockType[] = [
+  "quickAnswer", "hairstyleCard", "stylistTip", "stepByStep",
+  "faq", "prosCons", "relatedPosts", "productRecommendation",
+];
+
+export { STANDARD_BLOCKS, CUSTOM_BLOCKS };
 
 export function createBlock(type: BlockType): ContentBlock {
   const defaults: Record<BlockType, Record<string, unknown>> = {
@@ -84,27 +110,37 @@ export function createBlock(type: BlockType): ContentBlock {
     quote: { text: "", citation: "" },
     button: { text: "Click here", url: "#", style: "primary" },
     divider: {},
-    table: {
-      headers: ["Column 1", "Column 2"],
-      rows: [["", ""]],
-    },
+    table: { headers: ["Column 1", "Column 2"], rows: [["", ""]] },
     image: { src: "", alt: "", caption: "" },
     gallery: { images: [{ src: "", alt: "" }] },
     video: { url: "", caption: "" },
     embed: { url: "", caption: "" },
     html: { code: "" },
+    quickAnswer: { question: "", answer: "" },
+    hairstyleCard: { title: "", image: "", description: "", difficulty: "Easy", time: "30 min" },
+    stylistTip: { tip: "", stylistName: "" },
+    stepByStep: { title: "", steps: [{ title: "", description: "", image: "" }] },
+    faq: { items: [{ question: "", answer: "" }] },
+    prosCons: { title: "", pros: [""], cons: [""] },
+    relatedPosts: { postIds: [] },
+    productRecommendation: { name: "", image: "", description: "", price: "", url: "", rating: 5 },
   };
 
-  return {
-    id: crypto.randomUUID(),
-    type,
-    data: defaults[type],
-  };
+  return { id: crypto.randomUUID(), type, data: defaults[type] };
 }
 
 export function parseContent(content: string): ContentBlock[] {
   try {
     const parsed = JSON.parse(content);
+    return Array.isArray(parsed) ? parsed : [];
+  } catch {
+    return [];
+  }
+}
+
+export function parseTags(tags: string): string[] {
+  try {
+    const parsed = JSON.parse(tags);
     return Array.isArray(parsed) ? parsed : [];
   } catch {
     return [];
