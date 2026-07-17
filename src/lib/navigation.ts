@@ -20,6 +20,7 @@ export interface NavFeatured {
 export interface NavItem {
   label: string;
   href: string;
+  children?: NavLink[];
   mega?: {
     columns: NavColumn[];
     featured: NavFeatured;

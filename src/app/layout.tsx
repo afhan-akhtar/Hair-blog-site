@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Inter } from "next/font/google";
-import { SITE } from "@/lib/navigation";
+import { getSiteSettings } from "@/lib/site-settings";
 import "./globals.css";
 
 const playfair = Playfair_Display({
@@ -15,13 +15,17 @@ const inter = Inter({
   display: "swap",
 });
 
-export const metadata: Metadata = {
-  title: {
-    default: `${SITE.name} — ${SITE.tagline}`,
-    template: `%s — ${SITE.name}`,
-  },
-  description: SITE.description,
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const settings = await getSiteSettings();
+  return {
+    title: {
+      default: `${settings.site_title} — ${settings.site_tagline}`,
+      template: `%s — ${settings.site_title}`,
+    },
+    description: settings.site_description,
+    icons: settings.site_favicon ? { icon: settings.site_favicon } : undefined,
+  };
+}
 
 export default function RootLayout({
   children,

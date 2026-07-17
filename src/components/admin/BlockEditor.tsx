@@ -12,6 +12,7 @@ import {
 } from "@/lib/types";
 import { GripVertical, Plus, Trash2, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 
 interface BlockEditorProps {
   blocks: ContentBlock[];
@@ -325,53 +326,53 @@ function BlockFields({
 
     case "image":
       return (
-        <div className="space-y-2">
-          <input
-            type="text"
+        <div className="space-y-3">
+          <ImageUploadField
             value={(data.src as string) || ""}
-            onChange={(e) => onUpdate({ src: e.target.value })}
-            placeholder="Image URL"
-            className="text-white/70 text-sm w-full"
+            onChange={(url) => onUpdate({ src: url })}
+            compact
           />
           <input
             type="text"
             value={(data.alt as string) || ""}
             onChange={(e) => onUpdate({ alt: e.target.value })}
             placeholder="Alt text"
-            className="text-white/70 text-sm w-full"
+            className="text-gray-700 text-sm w-full border border-gray-200 rounded-lg px-3 py-2"
           />
           <input
             type="text"
             value={(data.caption as string) || ""}
             onChange={(e) => onUpdate({ caption: e.target.value })}
             placeholder="Caption (optional)"
-            className="text-white/50 text-sm w-full"
+            className="text-gray-500 text-sm w-full border border-gray-200 rounded-lg px-3 py-2"
           />
-          {(data.src as string) && (
-            <img
-              src={data.src as string}
-              alt={(data.alt as string) || ""}
-              className="rounded-lg max-h-48 object-cover"
-            />
-          )}
         </div>
       );
 
     case "gallery":
       return (
-        <div className="space-y-2">
+        <div className="space-y-3">
           {((data.images as { src: string; alt: string }[]) || []).map((img, i) => (
-            <div key={i} className="flex gap-2">
-              <input
-                type="text"
+            <div key={i} className="p-3 border border-gray-200 rounded-lg space-y-2">
+              <ImageUploadField
                 value={img.src}
-                onChange={(e) => {
+                onChange={(url) => {
                   const images = [...(data.images as { src: string; alt: string }[])];
-                  images[i] = { ...images[i], src: e.target.value };
+                  images[i] = { ...images[i], src: url };
                   onUpdate({ images });
                 }}
-                placeholder="Image URL"
-                className="text-white/70 text-sm flex-1"
+                compact
+              />
+              <input
+                type="text"
+                value={img.alt}
+                onChange={(e) => {
+                  const images = [...(data.images as { src: string; alt: string }[])];
+                  images[i] = { ...images[i], alt: e.target.value };
+                  onUpdate({ images });
+                }}
+                placeholder="Alt text"
+                className="text-gray-700 text-sm w-full border border-gray-200 rounded-lg px-3 py-2"
               />
             </div>
           ))}
@@ -384,7 +385,7 @@ function BlockFields({
                 ],
               })
             }
-            className="text-sm text-plum hover:text-white transition-colors"
+            className="text-sm text-admin-blue hover:underline"
           >
             + Add image
           </button>
@@ -475,7 +476,11 @@ function BlockFields({
       return (
         <div className="space-y-2">
           <input type="text" value={(data.name as string) || ""} onChange={(e) => onUpdate({ name: e.target.value })} placeholder="Product name" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
-          <input type="text" value={(data.image as string) || ""} onChange={(e) => onUpdate({ image: e.target.value })} placeholder="Image URL" className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
+          <ImageUploadField
+            value={(data.image as string) || ""}
+            onChange={(url) => onUpdate({ image: url })}
+            compact
+          />
           <textarea value={(data.description as string) || ""} onChange={(e) => onUpdate({ description: e.target.value })} placeholder="Description" rows={2} className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
           <input type="text" value={(data.price as string) || ""} onChange={(e) => onUpdate({ price: e.target.value })} placeholder="Price" className="text-gray-900 w-full border border-gray-200 rounded px-2 py-1 text-sm" />
           <input type="text" value={(data.url as string) || ""} onChange={(e) => onUpdate({ url: e.target.value })} placeholder="Product URL" className="text-gray-700 w-full border border-gray-200 rounded px-2 py-1 text-sm" />

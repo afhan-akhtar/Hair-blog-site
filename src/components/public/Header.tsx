@@ -5,8 +5,44 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Search, ChevronDown, Menu, X } from "lucide-react";
-import { MAIN_NAV, SITE, type NavItem } from "@/lib/navigation";
+import type { NavItem } from "@/lib/navigation";
+import type { SiteSettings } from "@/lib/site-settings";
 import { cn } from "@/lib/utils";
+
+interface HeaderProps {
+  branding: SiteSettings;
+  menu: NavItem[];
+}
+
+function SimpleDropdownPanel({
+  item,
+  onClose,
+}: {
+  item: NavItem;
+  onClose: () => void;
+}) {
+  if (!item.children?.length) return null;
+
+  return (
+    <div className="animate-dropdown-in border-t border-black/5 bg-white/95 backdrop-blur-xl shadow-lg">
+      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-5">
+        <ul className="flex flex-wrap gap-x-8 gap-y-2">
+          {item.children.map((link) => (
+            <li key={link.href}>
+              <Link
+                href={link.href}
+                onClick={onClose}
+                className="dropdown-link text-sm text-charcoal"
+              >
+                {link.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </div>
+  );
+}
 
 function MegaMenuPanel({
   item,
@@ -78,7 +114,7 @@ function MegaMenuPanel({
   );
 }
 
-export function Header() {
+export function Header({ branding, menu }: HeaderProps) {
   const pathname = usePathname();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -86,7 +122,10 @@ export function Header() {
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
 
-  const activeItem = MAIN_NAV.find((item) => item.label === openMenu);
+  const activeItem = menu.find((item) => item.label === openMenu);
+
+  const hasDropdown = (item: NavItem) =>
+    !!item.mega || (item.children?.length ?? 0) > 0;
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -153,19 +192,38 @@ export function Header() {
               href="/"
               className="flex-shrink-0 z-10 group cursor-pointer"
             >
-              <span className="font-serif text-[1.5rem] font-bold text-charcoal leading-none block transition-colors duration-300 group-hover:text-plum">
-                {SITE.name}
-              </span>
-              <span className="text-[9px] font-semibold uppercase tracking-[0.3em] text-terracotta mt-1 block transition-tracking duration-300 group-hover:tracking-[0.35em]">
-                {SITE.tagline}
-              </span>
+              {branding.site_logo ? (
+                <>
+                  <Image
+                    src={branding.site_logo}
+                    alt={branding.site_title}
+                    width={140}
+                    height={44}
+                    className="h-9 w-auto object-contain"
+                    priority
+                    unoptimized={branding.site_logo.startsWith("/uploads")}
+                  />
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.3em] text-terracotta mt-1.5 block">
+                    {branding.site_tagline}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <span className="font-serif text-[1.5rem] font-bold text-charcoal leading-none block transition-colors duration-300 group-hover:text-plum">
+                    {branding.site_title}
+                  </span>
+                  <span className="text-[9px] font-semibold uppercase tracking-[0.3em] text-terracotta mt-1 block transition-tracking duration-300 group-hover:tracking-[0.35em]">
+                    {branding.site_tagline}
+                  </span>
+                </>
+              )}
             </Link>
 
             <div className="hidden lg:flex flex-1 mx-10">
               <nav className="flex items-center justify-center gap-1 w-full">
-                {MAIN_NAV.map((item) => (
+                {menu.map((item) => (
                   <div key={item.label}>
-                    {item.mega ? (
+                    {hasDropdown(item) ? (
                       <button
                         type="button"
                         className={cn(
@@ -232,13 +290,18 @@ export function Header() {
             <MegaMenuPanel item={activeItem} onClose={() => setOpenMenu(null)} />
           </div>
         )}
+        {activeItem && !activeItem.mega && activeItem.children?.length ? (
+          <div className="hidden lg:block absolute left-0 right-0 top-full z-50">
+            <SimpleDropdownPanel item={activeItem} onClose={() => setOpenMenu(null)} />
+          </div>
+        ) : null}
 
         {mobileOpen && (
           <div className="lg:hidden border-t border-black/5 bg-white/98 backdrop-blur-lg max-h-[80vh] overflow-y-auto animate-dropdown-in">
             <nav className="px-5 py-4 space-y-1">
-              {MAIN_NAV.map((item) => (
+              {menu.map((item) => (
                 <div key={item.label}>
-                  {item.mega ? (
+                  {hasDropdown(item) ? (
                     <>
                       <button
                         type="button"
@@ -259,7 +322,7 @@ export function Header() {
                       </button>
                       {mobileExpanded === item.label && (
                         <div className="py-4 space-y-5 bg-cream/60 rounded-2xl px-4 my-2 animate-dropdown-in">
-                          {item.mega.columns.map((col) => (
+                          {item.mega?.columns.map((col) => (
                             <div key={col.title}>
                               <p className="text-[10px] font-bold text-terracotta uppercase tracking-wider mb-2">
                                 {col.title}
@@ -275,27 +338,41 @@ export function Header() {
                               ))}
                             </div>
                           ))}
-                          <Link
-                            href={item.mega.featured.href}
-                            className="flex items-center gap-3 pt-2 border-t border-black/5 cursor-pointer group"
-                          >
-                            <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 image-zoom-wrap">
-                              <Image
-                                src={item.mega.featured.image}
-                                alt=""
-                                fill
-                                className="object-cover zoom-target"
-                              />
-                            </div>
-                            <div>
-                              <span className="text-[9px] font-bold uppercase tracking-wider text-terracotta">
-                                {item.mega.featured.tag}
-                              </span>
-                              <p className="text-sm font-medium text-charcoal mt-0.5 leading-snug group-hover:text-terracotta transition-colors">
-                                {item.mega.featured.title}
-                              </p>
-                            </div>
-                          </Link>
+                          {item.children?.map((link) => (
+                            <Link
+                              key={link.href}
+                              href={link.href}
+                              className="block py-2 text-sm text-gray-700 hover:text-terracotta"
+                            >
+                              {link.label}
+                            </Link>
+                          ))}
+                          {item.mega?.featured && (
+                            <Link
+                              href={item.mega.featured.href}
+                              className="flex items-center gap-3 pt-2 border-t border-black/5 cursor-pointer group"
+                            >
+                              {item.mega.featured.image && (
+                                <div className="relative w-16 h-16 rounded-xl overflow-hidden flex-shrink-0 image-zoom-wrap">
+                                  <Image
+                                    src={item.mega.featured.image}
+                                    alt=""
+                                    fill
+                                    className="object-cover zoom-target"
+                                    unoptimized={item.mega.featured.image.startsWith("/uploads")}
+                                  />
+                                </div>
+                              )}
+                              <div>
+                                <span className="text-[9px] font-bold uppercase tracking-wider text-terracotta">
+                                  {item.mega.featured.tag}
+                                </span>
+                                <p className="text-sm font-medium text-charcoal mt-0.5 leading-snug group-hover:text-terracotta transition-colors">
+                                  {item.mega.featured.title}
+                                </p>
+                              </div>
+                            </Link>
+                          )}
                         </div>
                       )}
                     </>

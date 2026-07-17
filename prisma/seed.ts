@@ -139,12 +139,21 @@ async function main() {
 
   await prisma.siteSetting.createMany({
     data: [
-      { key: "site_title", value: "Hair Club" },
+      { key: "site_title", value: "The Hair Edit" },
+      { key: "site_tagline", value: "Hair • Beauty • Style" },
       { key: "site_description", value: "Beauty advice that feels inspiring—and genuinely useful." },
-      { key: "publisher_name", value: "Hair Club" },
+      { key: "site_logo", value: "" },
+      { key: "site_favicon", value: "" },
+      { key: "hero_video", value: "" },
+      { key: "publisher_name", value: "The Hair Edit" },
+      { key: "publisher_logo", value: "" },
       { key: "social_instagram", value: "https://instagram.com/hairclub" },
       { key: "social_pinterest", value: "https://pinterest.com/hairclub" },
       { key: "social_tiktok", value: "https://tiktok.com/@hairclub" },
+      { key: "copyright_text", value: "© {year} {site}. All rights reserved." },
+      { key: "copyright_link", value: "/" },
+      { key: "header_menu", value: "" },
+      { key: "footer_menu", value: "" },
     ],
   });
 

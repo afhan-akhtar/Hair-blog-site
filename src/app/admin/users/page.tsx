@@ -40,7 +40,9 @@ export default async function UsersPage() {
         {users.map((user) => (
           <div key={user.id} className="admin-card p-5 flex gap-4 hover:shadow-md transition-shadow">
             {user.avatar ? (
-              <Image src={user.avatar} alt={user.name} width={56} height={56} className="rounded-full" />
+              <div className="relative w-14 h-14 shrink-0 rounded-full overflow-hidden ring-2 ring-sky-100 shadow-sm">
+                <Image src={user.avatar} alt={user.name} fill className="object-cover" sizes="56px" />
+              </div>
             ) : (
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-sky-400 to-blue-600 text-white flex items-center justify-center text-xl font-bold shrink-0">
                 {user.name[0]}

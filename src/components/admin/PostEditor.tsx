@@ -3,6 +3,8 @@
 import { useState, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { BlockEditor } from "@/components/admin/BlockEditor";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
+import type { MediaItem } from "@/components/admin/MediaPicker";
 import { ContentBlock, PostStatus, PostVisibility, SchemaType, parseContent, parseTags } from "@/lib/types";
 import { slugify } from "@/lib/utils";
 import { checkSeo } from "@/lib/seo";
@@ -149,6 +151,12 @@ export function PostEditor({ post, categories, users, canPublish = true, current
     canonicalUrl, robots, breadcrumbTitle, inSitemap, socialTitle,
     socialDescription, socialImage, pinterestImage, schemaType, scheduledAt,
     seoCheck.score, isEditing, post, router, canPublish, status]);
+
+  const handleFeaturedImage = (url: string, media?: MediaItem) => {
+    setFeaturedImage(url);
+    if (media?.alt && !featuredImageAlt) setFeaturedImageAlt(media.alt);
+    if (media?.filename && !featuredImageTitle) setFeaturedImageTitle(media.filename);
+  };
 
   const sidebarSections: { key: SidebarSection; label: string }[] = [
     { key: "publishing", label: "Publishing" },
@@ -313,11 +321,11 @@ export function PostEditor({ post, categories, users, canPublish = true, current
 
             {activeSection === "featured" && (
               <>
-                <div>
-                  <label className={labelClass}>Image URL</label>
-                  <input type="text" value={featuredImage} onChange={(e) => setFeaturedImage(e.target.value)} className={inputClass} />
-                </div>
-                {featuredImage && <img src={featuredImage} alt="" className="rounded-lg w-full h-32 object-cover" />}
+                <ImageUploadField
+                  label="Featured Image"
+                  value={featuredImage}
+                  onChange={handleFeaturedImage}
+                />
                 <div>
                   <label className={labelClass}>Alt Text</label>
                   <input type="text" value={featuredImageAlt} onChange={(e) => setFeaturedImageAlt(e.target.value)} className={inputClass} />
@@ -404,14 +412,18 @@ export function PostEditor({ post, categories, users, canPublish = true, current
                   <label className={labelClass}>Social Description</label>
                   <textarea value={socialDescription} onChange={(e) => setSocialDescription(e.target.value)} rows={3} className={`${inputClass} resize-none`} />
                 </div>
-                <div>
-                  <label className={labelClass}>Social Image URL</label>
-                  <input type="text" value={socialImage} onChange={(e) => setSocialImage(e.target.value)} className={inputClass} />
-                </div>
-                <div>
-                  <label className={labelClass}>Pinterest Image URL</label>
-                  <input type="text" value={pinterestImage} onChange={(e) => setPinterestImage(e.target.value)} className={inputClass} />
-                </div>
+                <ImageUploadField
+                  label="Social Image"
+                  value={socialImage}
+                  onChange={setSocialImage}
+                  compact
+                />
+                <ImageUploadField
+                  label="Pinterest Image"
+                  value={pinterestImage}
+                  onChange={setPinterestImage}
+                  compact
+                />
               </>
             )}
 

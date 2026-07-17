@@ -22,6 +22,8 @@ export async function middleware(request: NextRequest) {
   const isProtected =
     pathname.startsWith("/admin") ||
     pathname.startsWith("/api/posts") ||
+    pathname.startsWith("/api/media") ||
+    pathname.startsWith("/api/settings") ||
     pathname.startsWith("/api/users") ||
     pathname === "/api/auth/password";
 
@@ -42,6 +44,10 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL("/admin", request.url));
   }
 
+  if (!isAdministrator(session.role) && pathname.startsWith("/admin/menus")) {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  }
+
   const response = NextResponse.next();
   response.headers.set("x-user-role", session.role);
   response.headers.set("x-user-id", session.id);
@@ -49,5 +55,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/api/posts/:path*", "/api/users/:path*", "/api/auth/password"],
+  matcher: ["/admin/:path*", "/api/posts/:path*", "/api/media/:path*", "/api/settings", "/api/users/:path*", "/api/auth/password"],
 };

@@ -279,6 +279,45 @@ body {
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.15);
 }
 
+.admin-search-field {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: #f8fafc;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 0.75rem;
+  transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+
+.admin-search-field:focus-within {
+  background: white;
+  border-color: #38bdf8;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.12);
+}
+
+.admin-search-icon {
+  position: absolute;
+  left: 0.875rem;
+  width: 1rem;
+  height: 1rem;
+  color: #94a3b8;
+  pointer-events: none;
+}
+
+.admin-search-input {
+  width: 100%;
+  padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: #0f172a;
+}
+
+.admin-search-input::placeholder {
+  color: #94a3b8;
+}
+
 .admin-btn-primary {
   padding: 0.625rem 1.25rem;
   background: linear-gradient(135deg, #307fb1 0%, #2563eb 100%);
