@@ -1,51 +1,45 @@
+// All URLs verified working (HTTP 200) — simple params for Next.js image optimizer
 export const IMAGES = {
-  // Hero — matched to reference mockup photography
   heroMain:
-    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1400&h=1800&fit=crop&q=90&auto=format",
+    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1400&q=80",
   heroSecondary1:
-    "https://images.unsplash.com/photo-1487412940907-5fbfae97fbcd?w=900&h=700&fit=crop&q=90&auto=format",
+    "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=900&q=80",
   heroSecondary2:
-    "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=900&h=700&fit=crop&q=90&auto=format",
+    "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=900&q=80",
 
-  // Find your next look avatars
   lookPixie:
-    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&h=300&fit=crop&q=80&auto=format",
+    "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&q=80",
   lookBob:
-    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&h=300&fit=crop&q=80&auto=format",
+    "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=300&q=80",
   lookShag:
-    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&h=300&fit=crop&q=80&auto=format",
+    "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=300&q=80",
   lookLayers:
-    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&h=300&fit=crop&q=80&auto=format",
+    "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=300&q=80",
   lookBuzz:
-    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&q=80&auto=format",
+    "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&q=80",
   lookBangs:
-    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&h=300&fit=crop&q=80&auto=format",
+    "https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=300&q=80",
 
-  // Latest stories
   story1:
-    "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=700&h=500&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1560066984-138dadb4c035?w=700&q=80",
   story2:
-    "https://images.unsplash.com/photo-1595476108010-b4d1f102b1f1?w=700&h=500&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1622287162716-f311baa1a2b8?w=700&q=80",
   story3:
-    "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=700&h=500&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=700&q=80",
 
-  // CTA — portrait with natural hair
   ctaPortrait:
-    "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800&h=900&fit=crop&q=90&auto=format",
+    "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=800&q=80",
 
-  // Hair care by concern
   concern1:
-    "https://images.unsplash.com/photo-1522336011484-49a8f33563b6?w=600&h=500&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1559599101-f09722fb4948?w=600&q=80",
   concern2:
-    "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&h=500&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600&q=80",
   concern3:
-    "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&h=500&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=600&q=80",
 
-  // Editorial quote lifestyle flat-lay
   lifestyle:
-    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&h=700&fit=crop&q=85&auto=format",
+    "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?w=800&q=80",
 
-  // Article pages
   articleHero:
     "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1200&q=80",
   articleInline:
@@ -55,7 +49,7 @@ export const IMAGES = {
   expertAvatar:
     "https://images.unsplash.com/photo-1580618672591-eb180b1a973f?w=200&q=80",
   related1:
-    "https://images.unsplash.com/photo-1595476108010-b4d1f102b1f1?w=400&q=80",
+    "https://images.unsplash.com/photo-1622287162716-f311baa1a2b8?w=400&q=80",
   related2:
     "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=400&q=80",
   related3:

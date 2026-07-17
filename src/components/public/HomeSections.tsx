@@ -1,5 +1,3 @@
-"use client";
-
 import Image from "next/image";
 import Link from "next/link";
 import { LOOKS, CONCERNS, LATEST_STORIES, IMAGES } from "@/lib/images";
@@ -16,7 +14,7 @@ export function QuizWidget() {
   return (
     <section className="py-16 px-5 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="bg-white rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-black/5 p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
+        <div className="bg-white rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-black/5 p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center transition-shadow duration-500 hover:shadow-[0_16px_56px_rgba(93,58,66,0.1)]">
           <div>
             <h2 className="font-serif text-3xl md:text-[2.1rem] font-bold leading-tight">
               What should you try next?
@@ -46,7 +44,7 @@ export function QuizWidget() {
                 </select>
               ))}
             </div>
-            <button className="w-full py-4 bg-terracotta text-white rounded-xl font-semibold text-sm hover:bg-plum transition-colors">
+            <button className="w-full py-4 bg-terracotta text-white rounded-xl font-semibold text-sm btn-lift hover:bg-plum">
               Find My Match
             </button>
           </div>
@@ -69,17 +67,17 @@ export function LooksSection() {
 
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-6 md:gap-8 mt-12">
           {LOOKS.map((look) => (
-            <Link key={look.name} href="#" className="group text-center">
-              <div className="relative w-[72px] h-[72px] md:w-[88px] md:h-[88px] mx-auto rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-plum/40 transition-all shadow-md">
+            <Link key={look.name} href="#" className="group text-center cursor-pointer">
+              <div className="w-[72px] h-[72px] md:w-[88px] md:h-[88px] mx-auto rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-terracotta/50 transition-all duration-500 shadow-md group-hover:shadow-lg group-hover:scale-110">
                 <Image
                   src={look.image}
                   alt={look.name}
-                  fill
-                  sizes="88px"
-                  className="object-cover"
+                  width={88}
+                  height={88}
+                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
                 />
               </div>
-              <span className="block text-xs md:text-sm font-medium text-gray-600 mt-3 group-hover:text-plum transition-colors">
+              <span className="block text-xs md:text-sm font-medium text-gray-600 mt-3 transition-all duration-300 group-hover:text-plum group-hover:-translate-y-0.5">
                 {look.name}
               </span>
             </Link>
@@ -100,7 +98,7 @@ export function ConcernsSection() {
           </h2>
           <Link
             href="#"
-            className="text-sm font-medium text-plum hover:text-plum-dark transition-colors hidden sm:block"
+            className="link-arrow text-sm font-medium text-plum hover:text-plum-dark hidden sm:block"
           >
             View all concerns →
           </Link>
@@ -108,14 +106,14 @@ export function ConcernsSection() {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {CONCERNS.map((concern) => (
-            <Link key={concern.title} href="#" className="group block">
-              <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden mb-4">
+            <Link key={concern.title} href="#" className="group block cursor-pointer card-hover rounded-[20px] p-2 -m-2">
+              <div className="image-zoom-wrap relative aspect-[4/3] rounded-[20px] overflow-hidden mb-4 shadow-sm">
                 <Image
                   src={concern.image}
                   alt={concern.title}
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover group-hover:scale-[1.04] transition-transform duration-500"
+                  className="object-cover zoom-target"
                 />
               </div>
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-plum">
@@ -137,14 +135,14 @@ export function CtaBanner() {
   return (
     <section className="py-8 px-5 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="rounded-[28px] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-plum shadow-lg">
-          <div className="relative aspect-[4/5] md:aspect-auto md:min-h-[400px]">
+        <div className="rounded-[28px] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-plum shadow-lg transition-shadow duration-500 hover:shadow-[0_24px_64px_rgba(93,58,66,0.35)]">
+          <div className="image-zoom-wrap relative aspect-[4/5] md:aspect-auto md:min-h-[400px]">
             <Image
               src={IMAGES.ctaPortrait}
               alt="Find your shade"
               fill
               sizes="(max-width: 768px) 100vw, 50vw"
-              className="object-cover object-top"
+              className="object-cover object-top zoom-target"
             />
           </div>
           <div className="flex flex-col justify-center p-10 md:p-14 lg:p-16">
@@ -154,7 +152,10 @@ export function CtaBanner() {
             <p className="text-white/65 mt-5 text-base leading-relaxed">
               Take our personalized hair color quiz to find your perfect match.
             </p>
-            <button className="mt-8 self-start px-8 py-3.5 bg-white text-plum rounded-full font-semibold text-sm hover:bg-rose transition-colors">
+            <button
+              type="button"
+              className="mt-8 self-start px-8 py-3.5 bg-white text-plum rounded-full font-semibold text-sm btn-lift hover:bg-rose cursor-pointer"
+            >
               The Hair Color Quiz
             </button>
           </div>
@@ -168,7 +169,7 @@ export function QuoteSection() {
   return (
     <section className="py-16 px-5 sm:px-6">
       <div className="max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-2 rounded-[28px] overflow-hidden shadow-sm">
+        <div className="grid grid-cols-1 md:grid-cols-2 rounded-[28px] overflow-hidden shadow-sm transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]">
           <div className="bg-white p-10 md:p-14 lg:p-16 flex flex-col justify-center">
             <blockquote className="font-serif text-2xl md:text-3xl lg:text-[2.1rem] font-bold leading-snug text-charcoal">
               &ldquo;Beauty advice should feel inspiring—and genuinely useful.&rdquo;
@@ -206,7 +207,7 @@ export function LatestStoriesSection() {
           </h2>
           <Link
             href="#"
-            className="text-sm font-medium text-plum hover:text-plum-dark transition-colors"
+            className="link-arrow text-sm font-medium text-plum hover:text-plum-dark"
           >
             View all stories →
           </Link>

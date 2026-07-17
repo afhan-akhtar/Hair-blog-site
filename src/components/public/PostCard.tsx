@@ -12,20 +12,27 @@ interface StoryCardProps {
 
 export function StoryCard({ tag, title, excerpt, date, slug, image }: StoryCardProps) {
   return (
-    <Link href={`/blog/${slug}`} className="group block">
-      <div className="relative aspect-[4/3] rounded-[20px] overflow-hidden mb-5">
+    <Link href={`/blog/${slug}`} className="group block cursor-pointer">
+      <div className="image-zoom-wrap relative aspect-[4/3] rounded-[20px] overflow-hidden mb-5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-shadow duration-500 group-hover:shadow-[0_12px_40px_rgba(93,58,66,0.12)]">
         <Image
           src={image}
           alt={title}
           fill
+          loading="lazy"
           sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover group-hover:scale-[1.04] transition-transform duration-500 ease-out"
+          className="object-cover zoom-target"
         />
+        <div className="absolute inset-0 bg-plum/0 group-hover:bg-plum/10 transition-colors duration-500" />
+        <div className="absolute bottom-4 right-4 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+          <span className="bg-white/95 text-charcoal text-xs font-semibold px-3 py-1.5 rounded-full shadow-md">
+            Read →
+          </span>
+        </div>
       </div>
-      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-terracotta">
+      <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-terracotta transition-colors duration-300 group-hover:text-plum">
         {tag}
       </span>
-      <h3 className="font-serif text-[1.35rem] font-bold mt-2 leading-snug text-charcoal group-hover:text-plum transition-colors">
+      <h3 className="font-serif text-[1.35rem] font-bold mt-2 leading-snug text-charcoal transition-colors duration-300 group-hover:text-plum">
         {title}
       </h3>
       <p className="text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed">{excerpt}</p>
