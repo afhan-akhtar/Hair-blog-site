@@ -1,0 +1,50 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  type      String   @default("hair")
+  createdAt DateTime @default(now())
+  posts     Post[]
+}
+
+model Author {
+  id        String   @id @default(cuid())
+  name      String
+  email     String?
+  avatar    String?
+  bio       String?
+  role      String   @default("writer")
+  createdAt DateTime @default(now())
+  posts     Post[]   @relation("AuthorPosts")
+  reviewed  Post[]   @relation("ReviewerPosts")
+}
+
+model Post {
+  id            String    @id @default(cuid())
+  title         String
+  slug          String    @unique
+  excerpt       String?
+  featuredImage String?
+  content       String    @default("[]")
+  status        String    @default("draft")
+  seoScore      Int       @default(0)
+  traffic       Int       @default(0)
+  publishedAt   DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  categoryId    String?
+  category      Category? @relation(fields: [categoryId], references: [id])
+  authorId      String?
+  author        Author?   @relation("AuthorPosts", fields: [authorId], references: [id])
+  reviewerId    String?
+  reviewer      Author?   @relation("ReviewerPosts", fields: [reviewerId], references: [id])
+}
