@@ -2,10 +2,12 @@ import { PostCard } from "@/components/public/PostCard";
 import { NewsletterBanner } from "@/components/public/NewsletterBanner";
 import { BlockRenderer } from "@/components/blocks/BlockRenderer";
 import { prisma } from "@/lib/db";
+import { getRelatedPosts } from "@/lib/posts";
 import { parseContent } from "@/lib/types";
 import { formatDate } from "@/lib/utils";
 import { NewsletterSignup } from "@/components/public/NewsletterSignup";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 
 export default async function BlogPostPage({
@@ -27,15 +29,11 @@ export default async function BlogPostPage({
 
   const blocks = parseContent(post.content);
 
-  const relatedPosts = await prisma.post.findMany({
-    where: {
-      status: "published",
-      id: { not: post.id },
-      categoryId: post.categoryId || undefined,
-    },
-    include: { category: true },
-    take: 3,
-  });
+  const { posts: relatedPosts, fromSameCategory } = await getRelatedPosts(
+    post.id,
+    post.categoryId,
+    3
+  );
 
   return (
     <>
@@ -137,10 +135,29 @@ export default async function BlogPostPage({
       </article>
 
       {relatedPosts.length > 0 && (
-        <section className="bg-white py-16 px-5 sm:px-6 border-t border-black/5">
-          <div className="max-w-7xl mx-auto">
-            <h2 className="font-serif text-3xl font-bold mb-10">Related stories</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <section className="bg-cream py-16 md:py-24 border-t border-black/5">
+          <div className="site-container">
+            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10 md:mb-12">
+              <div>
+                <p className="section-eyebrow mb-3">
+                  {fromSameCategory && post.category ? post.category.name : "Keep reading"}
+                </p>
+                <h2 className="section-heading-sm">
+                  {fromSameCategory && post.category
+                    ? `More in ${post.category.name}`
+                    : "Related stories"}
+                </h2>
+              </div>
+              {fromSameCategory && post.category && (
+                <Link
+                  href={`/category/${post.category.slug}`}
+                  className="link-arrow text-sm font-medium text-plum hover:text-plum-dark"
+                >
+                  View all →
+                </Link>
+              )}
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
               {relatedPosts.map((p) => (
                 <PostCard key={p.id} post={p} />
               ))}

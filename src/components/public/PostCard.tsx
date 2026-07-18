@@ -23,6 +23,7 @@ export function StoryCard({ tag, title, excerpt, date, slug, image }: StoryCardP
           fill
           loading="lazy"
           sizes="(max-width: 768px) 100vw, 33vw"
+          unoptimized={imageSrc.startsWith("/uploads")}
           className="object-cover object-center zoom-target"
         />
         <div className="absolute inset-0 bg-plum/0 group-hover:bg-plum/10 transition-colors duration-500" />
