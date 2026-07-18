@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Plus, Pencil, Eye, Copy, Trash2, Search } from "lucide-react";
+import { Plus, Pencil, Eye, Copy, Trash2, Search, RotateCcw } from "lucide-react";
 import { formatDate, getStatusColor } from "@/lib/utils";
 import { checkSeo, getSeoStatusColor, getSeoStatusLabel } from "@/lib/seo";
 
@@ -67,16 +67,28 @@ export function PostsTable({ posts, categories, users, canPublish = true }: Post
     setSelected(selected.includes(id) ? selected.filter((s) => s !== id) : [...selected, id]);
   };
 
-  const handleBulkAction = async (action: string) => {
-    if (!selected.length) return;
+  const isTrashView = statusFilter === "trash";
+
+  const handleAction = async (action: string, ids: string[]) => {
+    if (!ids.length) return;
+    if (action === "delete_permanent") {
+      const count = ids.length;
+      const message =
+        count === 1
+          ? "Permanently delete this post? This cannot be undone."
+          : `Permanently delete ${count} posts? This cannot be undone.`;
+      if (!window.confirm(message)) return;
+    }
     await fetch("/api/posts/bulk", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ids: selected, action }),
+      body: JSON.stringify({ ids, action }),
     });
     setSelected([]);
     router.refresh();
   };
+
+  const handleBulkAction = (action: string) => handleAction(action, selected);
 
   return (
     <div>
@@ -123,13 +135,24 @@ export function PostsTable({ posts, categories, users, canPublish = true }: Post
         </select>
         {selected.length > 0 && (
           <div className="flex gap-2">
-            {canPublish && (
-              <button onClick={() => handleBulkAction("publish")} className="px-3 py-2 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100">Publish</button>
+            {isTrashView ? (
+              canPublish && (
+                <>
+                  <button onClick={() => handleBulkAction("restore")} className="px-3 py-2 text-sm bg-blue-50 text-blue-700 rounded-lg hover:bg-blue-100">Restore</button>
+                  <button onClick={() => handleBulkAction("delete_permanent")} className="px-3 py-2 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100">Delete Permanently</button>
+                </>
+              )
+            ) : (
+              <>
+                {canPublish && (
+                  <button onClick={() => handleBulkAction("publish")} className="px-3 py-2 text-sm bg-green-50 text-green-700 rounded-lg hover:bg-green-100">Publish</button>
+                )}
+                {canPublish && (
+                  <button onClick={() => handleBulkAction("draft")} className="px-3 py-2 text-sm bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">Move to Draft</button>
+                )}
+                <button onClick={() => handleBulkAction("trash")} className="px-3 py-2 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100">Trash</button>
+              </>
             )}
-            {canPublish && (
-              <button onClick={() => handleBulkAction("draft")} className="px-3 py-2 text-sm bg-gray-50 text-gray-700 rounded-lg hover:bg-gray-100">Move to Draft</button>
-            )}
-            <button onClick={() => handleBulkAction("trash")} className="px-3 py-2 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100">Trash</button>
           </div>
         )}
       </div>
@@ -199,10 +222,21 @@ export function PostsTable({ posts, categories, users, canPublish = true }: Post
                     </td>
                     <td>
                       <div className="flex items-center gap-1">
-                        <Link href={`/admin/posts/${post.id}/edit`} className="p-1.5 rounded hover:bg-gray-100" title="Edit"><Pencil className="w-4 h-4 text-gray-500" /></Link>
-                        <Link href={`/blog/${post.slug}`} target="_blank" className="p-1.5 rounded hover:bg-gray-100" title="Preview"><Eye className="w-4 h-4 text-gray-500" /></Link>
-                        <button className="p-1.5 rounded hover:bg-gray-100" title="Duplicate"><Copy className="w-4 h-4 text-gray-500" /></button>
-                        <button onClick={() => handleBulkAction("trash")} className="p-1.5 rounded hover:bg-red-50" title="Trash"><Trash2 className="w-4 h-4 text-red-400" /></button>
+                        {isTrashView ? (
+                          canPublish && (
+                            <>
+                              <button onClick={() => handleAction("restore", [post.id])} className="p-1.5 rounded hover:bg-blue-50" title="Restore"><RotateCcw className="w-4 h-4 text-blue-500" /></button>
+                              <button onClick={() => handleAction("delete_permanent", [post.id])} className="p-1.5 rounded hover:bg-red-50" title="Delete Permanently"><Trash2 className="w-4 h-4 text-red-500" /></button>
+                            </>
+                          )
+                        ) : (
+                          <>
+                            <Link href={`/admin/posts/${post.id}/edit`} className="p-1.5 rounded hover:bg-gray-100" title="Edit"><Pencil className="w-4 h-4 text-gray-500" /></Link>
+                            <Link href={`/blog/${post.slug}`} target="_blank" className="p-1.5 rounded hover:bg-gray-100" title="Preview"><Eye className="w-4 h-4 text-gray-500" /></Link>
+                            <button className="p-1.5 rounded hover:bg-gray-100" title="Duplicate"><Copy className="w-4 h-4 text-gray-500" /></button>
+                            <button onClick={() => handleAction("trash", [post.id])} className="p-1.5 rounded hover:bg-red-50" title="Trash"><Trash2 className="w-4 h-4 text-red-400" /></button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

@@ -2,6 +2,11 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession, canPublish } from "@/lib/auth";
 
+async function permanentlyDeletePosts(ids: string[]) {
+  await prisma.redirect.deleteMany({ where: { postId: { in: ids } } });
+  await prisma.post.deleteMany({ where: { id: { in: ids }, status: "trash" } });
+}
+
 export async function POST(request: NextRequest) {
   const session = await getSession();
   if (!session) {
@@ -20,6 +25,10 @@ export async function POST(request: NextRequest) {
 
   if (session.role === "collaborator" && action !== "trash") {
     return NextResponse.json({ error: "Collaborators can only manage drafts" }, { status: 403 });
+  }
+
+  if ((action === "restore" || action === "delete_permanent") && !canPublish(session.role)) {
+    return NextResponse.json({ error: "Only administrators can manage trash" }, { status: 403 });
   }
 
   switch (action) {
@@ -46,6 +55,15 @@ export async function POST(request: NextRequest) {
       });
       break;
     }
+    case "restore":
+      await prisma.post.updateMany({
+        where: { id: { in: ids }, status: "trash" },
+        data: { status: "draft", deletedAt: null },
+      });
+      break;
+    case "delete_permanent":
+      await permanentlyDeletePosts(ids);
+      break;
     default:
       return NextResponse.json({ error: "Unknown action" }, { status: 400 });
   }

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
-import { getSession, sanitizePostStatus } from "@/lib/auth";
+import { getSession, sanitizePostStatus, canPublish } from "@/lib/auth";
 
 export async function GET(
   _request: NextRequest,
@@ -131,6 +131,15 @@ export async function DELETE(
     (existing.status !== "draft" || existing.authorId !== session.id)
   ) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
+
+  if (existing.status === "trash") {
+    if (!canPublish(session.role)) {
+      return NextResponse.json({ error: "Only administrators can permanently delete posts" }, { status: 403 });
+    }
+    await prisma.redirect.deleteMany({ where: { postId: id } });
+    await prisma.post.delete({ where: { id } });
+    return NextResponse.json({ success: true });
   }
 
   await prisma.post.update({

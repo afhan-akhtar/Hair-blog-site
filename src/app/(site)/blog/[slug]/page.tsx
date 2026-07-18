@@ -54,13 +54,15 @@ export default async function BlogPostPage({
           )}
           <div className="flex items-center justify-center gap-3 mt-6">
             {post.author?.avatar && (
-              <Image
-                src={post.author.avatar}
-                alt={post.author.name}
-                width={40}
-                height={40}
-                className="rounded-full"
-              />
+              <div className="relative w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
+                <Image
+                  src={post.author.avatar}
+                  alt={post.author.name}
+                  fill
+                  className="object-cover"
+                  sizes="40px"
+                />
+              </div>
             )}
             <div className="text-sm text-gray-600">
               <span className="font-medium text-charcoal">{post.author?.name}</span>
@@ -71,12 +73,13 @@ export default async function BlogPostPage({
         </header>
 
         {post.featuredImage && (
-          <div className="relative aspect-[16/9] max-w-4xl mx-auto rounded-[28px] overflow-hidden mb-12">
+          <div className="max-w-4xl mx-auto mb-12">
             <Image
               src={post.featuredImage}
               alt={post.featuredImageAlt || post.title}
-              fill
-              className="object-cover"
+              width={1200}
+              height={800}
+              className="w-full h-auto rounded-[28px]"
               priority
               sizes="(max-width: 896px) 100vw, 896px"
             />
@@ -90,13 +93,15 @@ export default async function BlogPostPage({
             {post.author && (
               <div className="bg-beige rounded-[20px] p-8 mt-12 flex gap-6 items-start">
                 {post.author.avatar && (
-                  <Image
-                    src={post.author.avatar}
-                    alt={post.author.name}
-                    width={64}
-                    height={64}
-                    className="rounded-full flex-shrink-0"
-                  />
+                  <div className="relative w-16 h-16 rounded-full overflow-hidden flex-shrink-0">
+                    <Image
+                      src={post.author.avatar}
+                      alt={post.author.name}
+                      fill
+                      className="object-cover"
+                      sizes="64px"
+                    />
+                  </div>
                 )}
                 <div>
                   <h3 className="font-serif text-lg font-bold">{post.author.name}</h3>

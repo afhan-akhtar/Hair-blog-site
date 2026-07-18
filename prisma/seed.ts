@@ -118,8 +118,8 @@ async function main() {
     { title: "Warm Brunette Shades That Look Expensive", slug: "warm-brunette-shades", excerpt: "Rich brunette tones.", featuredImage: IMAGES.heroSecondary1, categoryId: categories[1].id, status: "published", seoScore: 85, traffic: 8320, seoTitle: "Warm Brunette Shades", metaDescription: "Rich brunette hair color ideas.", focusKeyword: "warm brunette" },
     { title: "A Simple Guide to Realistic Synthetic Hair", slug: "synthetic-hair-guide", excerpt: "Synthetic hair guide.", featuredImage: IMAGES.heroSecondary2, categoryId: categories[6].id, status: "published", seoScore: 78, traffic: 5670 },
     { title: "How to Repair Damaged Hair in 4 Weeks", slug: "repair-damaged-hair", excerpt: "Repair routine.", featuredImage: IMAGES.story1, categoryId: categories[2].id, status: "published", seoScore: 88, traffic: 9100 },
-    { title: "Best Leave-In Conditioners for Curly Hair", slug: "leave-in-conditioners-curly", excerpt: "Top picks.", featuredImage: IMAGES.story2, categoryId: categories[2].id, status: "draft", seoScore: 45, traffic: 0, authorId: collaborator.id },
-    { title: "Balayage vs. Highlights", slug: "balayage-vs-highlights", excerpt: "Which is right?", featuredImage: IMAGES.story3, categoryId: categories[1].id, status: "review", seoScore: 55, traffic: 0 },
+    { title: "Best Leave-In Conditioners for Curly Hair", slug: "leave-in-conditioners-curly", excerpt: "Top picks.", featuredImage: IMAGES.story2, categoryId: categories[2].id, status: "published", seoScore: 88, traffic: 7200, publishedAt: new Date("2025-06-10") },
+    { title: "Balayage vs. Highlights", slug: "balayage-vs-highlights", excerpt: "Which is right?", featuredImage: IMAGES.story3, categoryId: categories[1].id, status: "published", seoScore: 90, traffic: 6800, publishedAt: new Date("2025-06-08") },
   ];
 
   for (const post of morePosts) {
@@ -129,7 +129,7 @@ async function main() {
         content: "[]",
         authorId: post.authorId || admin.id,
         visibility: "public",
-        publishedAt: post.status === "published" ? new Date() : null,
+        publishedAt: post.publishedAt || (post.status === "published" ? new Date() : null),
         tags: "[]",
         schemaType: "article",
         inSitemap: post.status === "published",

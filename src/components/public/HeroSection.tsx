@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HERO_CONTENT } from "@/lib/images";
+import { prisma } from "@/lib/db";
 
 function HeroBadge({ children }: { children: React.ReactNode }) {
   return (
@@ -10,8 +11,42 @@ function HeroBadge({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function HeroSection() {
-  const { main, secondary } = HERO_CONTENT;
+async function getHeroPosts() {
+  const slugs = [
+    HERO_CONTENT.main.slug,
+    ...HERO_CONTENT.secondary.map((item) => item.slug),
+  ];
+
+  const posts = await prisma.post.findMany({
+    where: { slug: { in: slugs }, status: "published", deletedAt: null },
+    include: { category: true },
+  });
+
+  const postBySlug = Object.fromEntries(posts.map((post) => [post.slug, post]));
+
+  const mainPost = postBySlug[HERO_CONTENT.main.slug];
+  const main = {
+    slug: HERO_CONTENT.main.slug,
+    tag: HERO_CONTENT.main.tag,
+    title: mainPost?.title ?? HERO_CONTENT.main.title,
+    image: mainPost?.featuredImage || HERO_CONTENT.main.image,
+  };
+
+  const secondary = HERO_CONTENT.secondary.map((item) => {
+    const post = postBySlug[item.slug];
+    return {
+      slug: item.slug,
+      tag: post?.category?.name ?? item.tag,
+      title: post?.title ?? item.title,
+      image: post?.featuredImage || item.image,
+    };
+  });
+
+  return { main, secondary };
+}
+
+export async function HeroSection() {
+  const { main, secondary } = await getHeroPosts();
 
   return (
     <section className="bg-cream">

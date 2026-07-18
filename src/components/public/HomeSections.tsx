@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LOOKS, CONCERNS, LATEST_STORIES, IMAGES } from "@/lib/images";
+import { LOOKS, CONCERNS, IMAGES } from "@/lib/images";
 import { StoryCard } from "./PostCard";
+import { prisma } from "@/lib/db";
 
 export function QuizWidget() {
   const fields = [
@@ -197,7 +198,14 @@ export function QuoteSection() {
   );
 }
 
-export function LatestStoriesSection() {
+export async function LatestStoriesSection() {
+  const posts = await prisma.post.findMany({
+    where: { status: "published", deletedAt: null },
+    include: { category: true },
+    orderBy: { publishedAt: "desc" },
+    take: 3,
+  });
+
   return (
     <section className="py-16 px-5 sm:px-6 bg-cream">
       <div className="max-w-7xl mx-auto">
@@ -206,7 +214,7 @@ export function LatestStoriesSection() {
             Latest stories
           </h2>
           <Link
-            href="#"
+            href="/blog"
             className="link-arrow text-sm font-medium text-plum hover:text-plum-dark"
           >
             View all stories →
@@ -214,8 +222,24 @@ export function LatestStoriesSection() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10">
-          {LATEST_STORIES.map((story) => (
-            <StoryCard key={story.slug} {...story} />
+          {posts.map((post) => (
+            <StoryCard
+              key={post.id}
+              tag={post.category?.name || "Hair"}
+              title={post.title}
+              excerpt={post.excerpt || ""}
+              date={
+                post.publishedAt
+                  ? new Date(post.publishedAt).toLocaleDateString("en-US", {
+                      month: "short",
+                      day: "numeric",
+                      year: "numeric",
+                    })
+                  : ""
+              }
+              slug={post.slug}
+              image={post.featuredImage || IMAGES.story1}
+            />
           ))}
         </div>
       </div>
