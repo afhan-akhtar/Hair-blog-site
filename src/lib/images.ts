@@ -2,10 +2,8 @@
 export const IMAGES = {
   heroMain:
     "https://images.unsplash.com/photo-1522337360788-8b13dee7a37e?w=1400&q=80",
-  heroSecondary1:
-    "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?w=900&q=80",
-  heroSecondary2:
-    "https://images.unsplash.com/photo-1519699047748-de8e457a634e?w=900&q=80",
+  heroSecondary1: "/images/hero/secondary-1.png",
+  heroSecondary2: "/images/hero/secondary-2.png",
 
   lookPixie:
     "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&q=80",
@@ -61,20 +59,17 @@ export const HERO_CONTENT = {
     tag: "Trending Now",
     title: "25 Soft Layered Haircuts That Add Movement Without Losing Length",
     slug: "soft-layered-haircuts",
-    image: IMAGES.heroMain,
   },
   secondary: [
     {
       tag: "Hair Color",
       title: "Warm Brunette Shades That Look Expensive",
       slug: "warm-brunette-shades",
-      image: IMAGES.heroSecondary1,
     },
     {
       tag: "Hair Care",
       title: "A Simple Guide For Healthy Scalp & Hair",
       slug: "synthetic-hair-guide",
-      image: IMAGES.heroSecondary2,
     },
   ],
 };
@@ -86,6 +81,54 @@ export const LOOKS = [
   { name: "Layers", image: IMAGES.lookLayers },
   { name: "Buzz Cut", image: IMAGES.lookBuzz },
   { name: "Bangs", image: IMAGES.lookBangs },
+];
+
+export const LOOK_CATEGORIES = [
+  {
+    name: "Short Hair",
+    subtitle: "Pixies, bobs & crops",
+    image: IMAGES.lookPixie,
+    href: "/category/short-hairstyles",
+  },
+  {
+    name: "Medium Hair",
+    subtitle: "Lobs, layers & bangs",
+    image: IMAGES.lookBob,
+    href: "/category/medium-hairstyles",
+  },
+  {
+    name: "Long Hair",
+    subtitle: "Length with movement",
+    image: IMAGES.lookLayers,
+    href: "/category/long-hairstyles",
+  },
+  {
+    name: "Curly Hair",
+    subtitle: "Shape, definition & care",
+    image: IMAGES.lookShag,
+    href: "/category/curly-wavy",
+  },
+  {
+    name: "Hair Color",
+    subtitle: "Natural to bold",
+    image: IMAGES.lookBangs,
+    href: "/category/hair-colors",
+  },
+  {
+    name: "Hair Care",
+    subtitle: "Healthy-hair routines",
+    image: IMAGES.concern1,
+    href: "/category/hair-care",
+  },
+];
+
+export const TRENDING_TAGS = [
+  "Butterfly layers",
+  "Cherry cola hair",
+  "Short cuts over 50",
+  "Heatless curls",
+  "Fine-hair volume",
+  "Summer braids",
 ];
 
 export const LATEST_STORIES = [

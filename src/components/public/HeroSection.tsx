@@ -1,11 +1,11 @@
 import Link from "next/link";
-import Image from "next/image";
 import { HERO_CONTENT } from "@/lib/images";
 import { prisma } from "@/lib/db";
+import { HeroMedia } from "./HeroMedia";
 
 function HeroBadge({ children }: { children: React.ReactNode }) {
   return (
-    <span className="inline-block bg-white/95 text-charcoal text-[10px] font-bold uppercase tracking-[0.15em] px-3 py-1.5 rounded-full shadow-sm backdrop-blur-sm">
+    <span className="inline-block bg-white/95 text-charcoal text-[11px] font-bold uppercase tracking-[0.18em] px-3.5 py-2 rounded-full shadow-sm backdrop-blur-sm">
       {children}
     </span>
   );
@@ -29,7 +29,7 @@ async function getHeroPosts() {
     slug: HERO_CONTENT.main.slug,
     tag: HERO_CONTENT.main.tag,
     title: mainPost?.title ?? HERO_CONTENT.main.title,
-    image: mainPost?.featuredImage || HERO_CONTENT.main.image,
+    image: mainPost?.featuredImage ?? "",
   };
 
   const secondary = HERO_CONTENT.secondary.map((item) => {
@@ -38,7 +38,7 @@ async function getHeroPosts() {
       slug: item.slug,
       tag: post?.category?.name ?? item.tag,
       title: post?.title ?? item.title,
-      image: post?.featuredImage || item.image,
+      image: post?.featuredImage ?? "",
     };
   });
 
@@ -50,70 +50,53 @@ export async function HeroSection() {
 
   return (
     <section className="bg-cream">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 pt-8 pb-4">
-        <p className="text-center text-[11px] font-semibold uppercase tracking-[0.35em] text-terracotta mb-6 animate-fade-up">
+      <div className="site-container pt-10 pb-10 lg:pt-12 lg:pb-14">
+        <p className="text-center text-xs sm:text-sm font-semibold uppercase tracking-[0.35em] text-terracotta mb-8 lg:mb-10 animate-fade-up">
           Hair &bull; Beauty &bull; Style
         </p>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-5">
+        <div className="hero-grid">
           <Link
             href={`/blog/${main.slug}`}
-            className="image-zoom-wrap lg:col-span-7 relative rounded-[24px] overflow-hidden h-[480px] lg:h-[580px] group block cursor-pointer card-hover shadow-[0_8px_40px_rgba(0,0,0,0.08)]"
+            className="hero-card hero-card-main image-zoom-wrap group block cursor-pointer card-hover shadow-[0_12px_48px_rgba(0,0,0,0.1)]"
           >
-            <Image
+            <HeroMedia
               src={main.image}
               alt={main.title}
-              fill
               priority
               sizes="(max-width: 1024px) 100vw, 58vw"
-              className="object-cover object-top zoom-target"
+              position="top"
             />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent transition-all duration-500 group-hover:from-black/85" />
-            <div className="absolute bottom-0 left-0 right-0 p-7 md:p-9 transition-transform duration-500 group-hover:-translate-y-1">
+            <div className="hero-card-overlay hero-card-overlay-main" />
+            <div className="hero-card-content">
               <HeroBadge>{main.tag}</HeroBadge>
-              <h2 className="font-serif text-[1.75rem] md:text-[2.25rem] lg:text-[2.5rem] font-bold text-white mt-4 leading-[1.15] max-w-lg transition-colors duration-300 group-hover:text-rose/90">
+              <h2 className="font-serif text-[1.85rem] sm:text-[2.35rem] md:text-[2.85rem] lg:text-[3.25rem] xl:text-[3.5rem] font-bold text-white mt-4 lg:mt-5 leading-[1.08] max-w-2xl transition-colors duration-300 group-hover:text-rose/90">
                 {main.title}
               </h2>
             </div>
           </Link>
 
-          <div className="lg:col-span-5 grid grid-rows-2 gap-4 lg:gap-5 h-[460px] lg:h-[580px]">
+          <div className="hero-side-stack">
             {secondary.map((item, i) => (
               <Link
                 key={item.slug}
                 href={`/blog/${item.slug}`}
-                className="image-zoom-wrap relative rounded-[24px] overflow-hidden min-h-[220px] h-full group block cursor-pointer card-hover shadow-[0_4px_24px_rgba(0,0,0,0.06)]"
+                className="hero-card hero-card-side image-zoom-wrap group block cursor-pointer card-hover shadow-[0_8px_32px_rgba(0,0,0,0.08)]"
               >
-                <Image
+                <HeroMedia
                   src={item.image}
                   alt={item.title}
-                  fill
                   priority={i === 0}
                   sizes="(max-width: 1024px) 100vw, 42vw"
-                  className="object-cover object-center zoom-target"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/15 to-transparent transition-all duration-500 group-hover:from-black/80" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-7 transition-transform duration-500 group-hover:-translate-y-1">
+                <div className="hero-card-overlay" />
+                <div className="hero-card-content hero-card-content-side">
                   <HeroBadge>{item.tag}</HeroBadge>
-                  <h3 className="font-serif text-xl md:text-[1.4rem] font-bold text-white mt-3 leading-snug">
+                  <h3 className="font-serif text-xl sm:text-2xl lg:text-[1.75rem] xl:text-[1.9rem] font-bold text-white mt-3 leading-snug">
                     {item.title}
                   </h3>
                 </div>
               </Link>
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-6 py-3 border-y border-black/5 overflow-hidden">
-          <div className="marquee-track">
-            {[0, 1].map((n) => (
-              <p
-                key={n}
-                className="text-sm text-gray-500 whitespace-nowrap px-8 flex items-center gap-6"
-              >
-                <span className="font-semibold text-charcoal">Trending:</span>
-                New layers · Buzz cuts · Soft curtain bangs · Pixie cuts · Warm brunette · Scalp care · Silk press · Face-framing layers · Gloss treatments
-              </p>
             ))}
           </div>
         </div>

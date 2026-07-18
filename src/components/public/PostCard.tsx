@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { IMAGES } from "@/lib/images";
 
 interface StoryCardProps {
   tag: string;
@@ -11,16 +12,18 @@ interface StoryCardProps {
 }
 
 export function StoryCard({ tag, title, excerpt, date, slug, image }: StoryCardProps) {
+  const imageSrc = image || IMAGES.story1;
+
   return (
     <Link href={`/blog/${slug}`} className="group block cursor-pointer">
-      <div className="image-zoom-wrap relative aspect-[4/3] rounded-[20px] overflow-hidden mb-5 shadow-[0_4px_20px_rgba(0,0,0,0.06)] transition-shadow duration-500 group-hover:shadow-[0_12px_40px_rgba(93,58,66,0.12)]">
+      <div className="story-image-wrap image-zoom-wrap transition-shadow duration-500 group-hover:shadow-[0_12px_40px_rgba(93,58,66,0.12)]">
         <Image
-          src={image}
+          src={imageSrc}
           alt={title}
           fill
           loading="lazy"
           sizes="(max-width: 768px) 100vw, 33vw"
-          className="object-cover zoom-target"
+          className="object-cover object-center zoom-target"
         />
         <div className="absolute inset-0 bg-plum/0 group-hover:bg-plum/10 transition-colors duration-500" />
         <div className="absolute bottom-4 right-4 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
@@ -32,11 +35,11 @@ export function StoryCard({ tag, title, excerpt, date, slug, image }: StoryCardP
       <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-terracotta transition-colors duration-300 group-hover:text-plum">
         {tag}
       </span>
-      <h3 className="font-serif text-[1.35rem] font-bold mt-2 leading-snug text-charcoal transition-colors duration-300 group-hover:text-plum">
+      <h3 className="font-serif text-xl md:text-2xl font-bold mt-2 leading-snug text-charcoal transition-colors duration-300 group-hover:text-plum">
         {title}
       </h3>
-      <p className="text-sm text-gray-500 mt-2 line-clamp-2 leading-relaxed">{excerpt}</p>
-      <p className="text-xs text-gray-400 mt-3">{date}</p>
+      <p className="text-sm md:text-base text-gray-500 mt-2 line-clamp-2 leading-relaxed">{excerpt}</p>
+      <p className="text-xs md:text-sm text-gray-400 mt-3">{date}</p>
     </Link>
   );
 }

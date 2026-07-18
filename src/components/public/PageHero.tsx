@@ -7,7 +7,7 @@ interface PageHeroProps {
 export function PageHero({ title, subtitle, badge }: PageHeroProps) {
   return (
     <section className="bg-white border-b border-black/5">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-14 md:py-20 text-center">
+      <div className="site-container py-14 md:py-20 text-center">
         {badge && (
           <span className="inline-block text-[10px] font-bold uppercase tracking-[0.25em] text-terracotta mb-4">
             {badge}

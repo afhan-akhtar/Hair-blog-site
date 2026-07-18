@@ -53,7 +53,7 @@ export function Footer({ branding, footerMenu }: FooterProps) {
 
   return (
     <footer className="bg-plum-dark text-white">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-16">
+      <div className="site-container py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
           <div className="md:col-span-5">
             <Link href="/" className="group cursor-pointer inline-block">

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { LOOKS, CONCERNS, IMAGES } from "@/lib/images";
+import { LOOK_CATEGORIES, CONCERNS, IMAGES, TRENDING_TAGS } from "@/lib/images";
 import { StoryCard } from "./PostCard";
 import { prisma } from "@/lib/db";
 
@@ -13,14 +13,14 @@ export function QuizWidget() {
   ];
 
   return (
-    <section className="py-16 px-5 sm:px-6">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-16">
+      <div className="site-container">
         <div className="bg-white rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-black/5 p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center transition-shadow duration-500 hover:shadow-[0_16px_56px_rgba(93,58,66,0.1)]">
           <div>
-            <h2 className="font-serif text-3xl md:text-[2.1rem] font-bold leading-tight">
+            <h2 className="section-heading-sm">
               What should you try next?
             </h2>
-            <p className="text-gray-500 mt-4 leading-relaxed">
+            <p className="text-gray-500 mt-5 text-base md:text-lg leading-relaxed">
               Tell us about your hair goals and we&apos;ll recommend products and
               styles tailored just for you.
             </p>
@@ -57,30 +57,46 @@ export function QuizWidget() {
 
 export function LooksSection() {
   return (
-    <section className="py-16 px-5 sm:px-6 bg-white">
-      <div className="max-w-7xl mx-auto text-center">
-        <h2 className="font-serif text-3xl md:text-[2.1rem] font-bold">
-          Find your next look
-        </h2>
-        <p className="text-gray-500 mt-3 max-w-lg mx-auto text-sm leading-relaxed">
-          Browse by style to discover cuts, colors, and inspiration that fit your vibe.
-        </p>
+    <section className="py-16 md:py-24 bg-white border-t border-black/5">
+      <div className="site-container">
+        <div className="flex flex-wrap items-center gap-2.5 mb-12 md:mb-16">
+          <span className="text-sm md:text-base font-semibold text-charcoal mr-1">Trending:</span>
+          {TRENDING_TAGS.map((tag) => (
+            <span key={tag} className="trending-pill">
+              {tag}
+            </span>
+          ))}
+        </div>
 
-        <div className="grid grid-cols-3 sm:grid-cols-6 gap-6 md:gap-8 mt-12">
-          {LOOKS.map((look) => (
-            <Link key={look.name} href="#" className="group text-center cursor-pointer">
-              <div className="w-[72px] h-[72px] md:w-[88px] md:h-[88px] mx-auto rounded-full overflow-hidden ring-2 ring-transparent group-hover:ring-terracotta/50 transition-all duration-500 shadow-md group-hover:shadow-lg group-hover:scale-110">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 mb-14 md:mb-20">
+          <div>
+            <p className="section-eyebrow mb-4">— Browse your way</p>
+            <h2 className="section-heading">Find your next look</h2>
+          </div>
+          <p className="text-base md:text-lg lg:text-xl text-gray-500 leading-relaxed lg:max-w-xl lg:ml-auto lg:self-end">
+            Browse by length, texture, and goal to discover cuts, colors, and routines
+            that feel right for your hair — not someone else&apos;s.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-8 md:gap-10">
+          {LOOK_CATEGORIES.map((look) => (
+            <Link key={look.name} href={look.href} className="group text-center cursor-pointer">
+              <div className="look-avatar">
                 <Image
                   src={look.image}
                   alt={look.name}
-                  width={88}
-                  height={88}
-                  className="object-cover w-full h-full transition-transform duration-500 group-hover:scale-110"
+                  fill
+                  sizes="(max-width: 768px) 25vw, 120px"
+                  className="object-cover object-center transition-transform duration-500 group-hover:scale-105"
                 />
               </div>
-              <span className="block text-xs md:text-sm font-medium text-gray-600 mt-3 transition-all duration-300 group-hover:text-plum group-hover:-translate-y-0.5">
+              <h3 className="font-serif text-base md:text-lg font-bold text-charcoal mt-4 transition-colors duration-300 group-hover:text-plum">
                 {look.name}
-              </span>
+              </h3>
+              <p className="text-xs md:text-sm text-gray-500 mt-1.5 leading-snug px-1">
+                {look.subtitle}
+              </p>
             </Link>
           ))}
         </div>
@@ -91,10 +107,10 @@ export function LooksSection() {
 
 export function ConcernsSection() {
   return (
-    <section className="py-16 px-5 sm:px-6">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-16">
+      <div className="site-container">
         <div className="flex items-end justify-between mb-10">
-          <h2 className="font-serif text-3xl md:text-[2.1rem] font-bold">
+          <h2 className="section-heading-sm">
             Hair care by concern
           </h2>
           <Link
@@ -120,7 +136,7 @@ export function ConcernsSection() {
               <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-plum">
                 {concern.tag}
               </span>
-              <h3 className="font-serif text-xl font-bold mt-2 group-hover:text-plum transition-colors">
+              <h3 className="font-serif text-xl md:text-2xl font-bold mt-2 group-hover:text-plum transition-colors">
                 {concern.title}
               </h3>
               <p className="text-sm text-gray-500 mt-2 leading-relaxed">{concern.excerpt}</p>
@@ -134,8 +150,8 @@ export function ConcernsSection() {
 
 export function CtaBanner() {
   return (
-    <section className="py-8 px-5 sm:px-6">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-8">
+      <div className="site-container">
         <div className="rounded-[28px] overflow-hidden grid grid-cols-1 md:grid-cols-2 bg-plum shadow-lg transition-shadow duration-500 hover:shadow-[0_24px_64px_rgba(93,58,66,0.35)]">
           <div className="image-zoom-wrap relative aspect-[4/5] md:aspect-auto md:min-h-[400px]">
             <Image
@@ -147,7 +163,7 @@ export function CtaBanner() {
             />
           </div>
           <div className="flex flex-col justify-center p-10 md:p-14 lg:p-16">
-            <h2 className="font-serif text-3xl md:text-[2.25rem] font-bold text-white leading-tight">
+            <h2 className="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-white leading-tight">
               Find a shade that works beyond the salon chair.
             </h2>
             <p className="text-white/65 mt-5 text-base leading-relaxed">
@@ -168,11 +184,11 @@ export function CtaBanner() {
 
 export function QuoteSection() {
   return (
-    <section className="py-16 px-5 sm:px-6">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-16">
+      <div className="site-container">
         <div className="grid grid-cols-1 md:grid-cols-2 rounded-[28px] overflow-hidden shadow-sm transition-shadow duration-500 hover:shadow-[0_16px_48px_rgba(0,0,0,0.08)]">
           <div className="bg-white p-10 md:p-14 lg:p-16 flex flex-col justify-center">
-            <blockquote className="font-serif text-2xl md:text-3xl lg:text-[2.1rem] font-bold leading-snug text-charcoal">
+            <blockquote className="font-serif text-2xl md:text-4xl lg:text-[2.75rem] font-bold leading-snug text-charcoal">
               &ldquo;Beauty advice should feel inspiring—and genuinely useful.&rdquo;
             </blockquote>
             <p className="text-sm text-gray-500 mt-8 leading-relaxed max-w-sm">
@@ -207,10 +223,10 @@ export async function LatestStoriesSection() {
   });
 
   return (
-    <section className="py-16 px-5 sm:px-6 bg-cream">
-      <div className="max-w-7xl mx-auto">
+    <section className="py-16 md:py-24 bg-cream">
+      <div className="site-container">
         <div className="flex items-end justify-between mb-10">
-          <h2 className="font-serif text-3xl md:text-[2.1rem] font-bold">
+          <h2 className="section-heading-sm">
             Latest stories
           </h2>
           <Link

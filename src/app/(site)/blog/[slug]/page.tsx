@@ -46,11 +46,11 @@ export default async function BlogPostPage({
               {post.category.name}
             </span>
           )}
-          <h1 className="font-serif text-4xl md:text-5xl font-bold mt-4 leading-tight">
+          <h1 className="font-serif text-4xl md:text-5xl lg:text-6xl font-bold mt-4 leading-[1.08]">
             {post.title}
           </h1>
           {post.excerpt && (
-            <p className="text-lg text-gray-600 mt-4 leading-relaxed">{post.excerpt}</p>
+            <p className="text-lg md:text-xl text-gray-600 mt-5 leading-relaxed">{post.excerpt}</p>
           )}
           <div className="flex items-center justify-center gap-3 mt-6">
             {post.author?.avatar && (
@@ -73,15 +73,16 @@ export default async function BlogPostPage({
         </header>
 
         {post.featuredImage && (
-          <div className="max-w-4xl mx-auto mb-12">
+          <div className="w-full mb-12 md:mb-16 flex items-center justify-center rounded-[28px] overflow-hidden bg-beige">
             <Image
               src={post.featuredImage}
               alt={post.featuredImageAlt || post.title}
-              width={1200}
-              height={800}
-              className="w-full h-auto rounded-[28px]"
+              width={1400}
+              height={1050}
+              className="w-full h-auto object-contain object-center"
+              unoptimized={post.featuredImage.startsWith("/uploads")}
               priority
-              sizes="(max-width: 896px) 100vw, 896px"
+              sizes="(max-width: 1280px) 100vw, 1280px"
             />
           </div>
         )}

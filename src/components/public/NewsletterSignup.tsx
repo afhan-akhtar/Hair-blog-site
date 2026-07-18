@@ -23,27 +23,27 @@ export function NewsletterSignup({ variant = "banner" }: NewsletterSignupProps) 
   }
 
   return (
-    <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
-      <div>
-        <h2 className="font-serif text-3xl md:text-4xl font-bold text-charcoal">
+    <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 lg:gap-14 w-full">
+      <div className="lg:max-w-xl">
+        <h2 className="font-serif text-3xl md:text-4xl lg:text-[2.75rem] font-bold text-charcoal leading-tight">
           Your weekly hair edit.
         </h2>
-        <p className="text-gray-500 mt-2 text-sm max-w-md">
+        <p className="text-gray-500 mt-3 md:mt-4 text-sm md:text-base leading-relaxed">
           The best new cuts, colors, and care tips — delivered every Sunday.
         </p>
       </div>
       <form
-        className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto"
+        className="flex flex-col sm:flex-row gap-3 w-full lg:w-auto lg:flex-shrink-0"
         onSubmit={(e) => e.preventDefault()}
       >
         <input
           type="email"
           placeholder="Enter your email"
-          className="flex-1 sm:w-72 px-5 py-3.5 rounded-xl bg-white border border-black/10 text-sm focus:outline-none focus:ring-2 focus:ring-plum/30 focus:border-plum/30 shadow-sm transition-all duration-300"
+          className="w-full sm:min-w-[280px] lg:min-w-[320px] h-14 px-5 rounded-xl bg-white border border-black/10 text-sm md:text-base text-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-plum/30 focus:border-plum/30 shadow-sm transition-all duration-300"
         />
         <button
           type="submit"
-          className="px-8 py-3.5 bg-charcoal text-white rounded-xl text-sm font-semibold btn-lift hover:bg-plum whitespace-nowrap cursor-pointer"
+          className="h-14 px-10 bg-charcoal text-white rounded-xl text-sm md:text-base font-semibold btn-lift hover:bg-plum whitespace-nowrap cursor-pointer"
         >
           Join
         </button>

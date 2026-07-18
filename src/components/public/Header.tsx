@@ -25,7 +25,7 @@ function SimpleDropdownPanel({
 
   return (
     <div className="animate-dropdown-in border-t border-black/5 bg-white/95 backdrop-blur-xl shadow-lg">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-5">
+      <div className="site-container py-5">
         <ul className="flex flex-wrap gap-x-8 gap-y-2">
           {item.children.map((link) => (
             <li key={link.href}>
@@ -56,7 +56,7 @@ function MegaMenuPanel({
 
   return (
     <div className="animate-dropdown-in border-t border-black/5 bg-white/95 backdrop-blur-xl shadow-[0_24px_80px_rgba(93,58,66,0.14)]">
-      <div className="max-w-7xl mx-auto px-5 sm:px-6 py-8">
+      <div className="site-container py-8">
         <div className="grid grid-cols-1 md:grid-cols-[1fr_1fr_280px] gap-0 rounded-[22px] overflow-hidden border border-black/[0.06] shadow-sm">
           {columns.map((col, i) => (
             <div
@@ -186,7 +186,7 @@ export function Header({ branding, menu }: HeaderProps) {
         )}
         onMouseLeave={handleHeaderMouseLeave}
       >
-        <div className="max-w-7xl mx-auto px-5 sm:px-6">
+        <div className="site-container">
           <div className="flex items-center justify-between h-[76px]">
             <Link
               href="/"
