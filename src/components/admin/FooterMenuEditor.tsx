@@ -68,7 +68,7 @@ export function FooterMenuEditor({ initialMenu }: FooterMenuEditorProps) {
     <div className="space-y-4">
       <div className="admin-card p-4 bg-violet-50/50 border-violet-100">
         <p className="text-sm text-violet-800">
-          Footer columns appear at the bottom of every page. Add columns and links just like WordPress footer menus.
+          Footer columns appear at the bottom of every page. Add columns and links to build your site footer.
         </p>
       </div>
 

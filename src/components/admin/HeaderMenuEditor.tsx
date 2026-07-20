@@ -135,7 +135,7 @@ export function HeaderMenuEditor({ initialMenu }: HeaderMenuEditorProps) {
     <div className="space-y-4">
       <div className="admin-card p-4 bg-sky-50/50 border-sky-100">
         <p className="text-sm text-sky-800">
-          Build your header navigation like WordPress — add links, simple dropdowns, or full mega menus.
+          Build your header navigation — add links, simple dropdowns, or full mega menus.
           Drag order with the arrow buttons.
         </p>
       </div>
