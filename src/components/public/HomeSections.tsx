@@ -4,56 +4,7 @@ import { LOOK_CATEGORIES, CONCERNS, IMAGES, TRENDING_TAGS } from "@/lib/images";
 import { StoryCard } from "./PostCard";
 import { prisma } from "@/lib/db";
 
-export function QuizWidget() {
-  const fields = [
-    { label: "Goal", options: ["More volume", "Less frizz", "New color", "Healthy growth"] },
-    { label: "Hair Type", options: ["Straight", "Wavy", "Curly", "Coily"] },
-    { label: "Hair Length", options: ["Short", "Medium", "Long"] },
-    { label: "Hair Texture", options: ["Fine", "Medium", "Thick"] },
-  ];
-
-  return (
-    <section className="py-16">
-      <div className="site-container">
-        <div className="bg-white rounded-[28px] shadow-[0_8px_40px_rgba(0,0,0,0.06)] border border-black/5 p-8 md:p-12 grid grid-cols-1 lg:grid-cols-2 gap-10 items-center transition-shadow duration-500 hover:shadow-[0_16px_56px_rgba(93,58,66,0.1)]">
-          <div>
-            <h2 className="section-heading-sm">
-              What should you try next?
-            </h2>
-            <p className="text-gray-500 mt-5 text-base md:text-lg leading-relaxed">
-              Tell us about your hair goals and we&apos;ll recommend products and
-              styles tailored just for you.
-            </p>
-          </div>
-
-          <div>
-            <div className="grid grid-cols-2 gap-3 mb-4">
-              {fields.map((field) => (
-                <select
-                  key={field.label}
-                  defaultValue=""
-                  className="w-full px-4 py-3.5 rounded-xl border border-black/10 text-sm bg-cream text-gray-700 focus:outline-none focus:ring-2 focus:ring-plum/20 appearance-none cursor-pointer"
-                >
-                  <option value="" disabled>
-                    {field.label}
-                  </option>
-                  {field.options.map((opt) => (
-                    <option key={opt} value={opt}>
-                      {opt}
-                    </option>
-                  ))}
-                </select>
-              ))}
-            </div>
-            <button className="w-full py-4 bg-terracotta text-white rounded-xl font-semibold text-sm btn-lift hover:bg-plum">
-              Find My Match
-            </button>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
+export { QuizWidget } from "./QuizWidget";
 
 export function LooksSection() {
   return (

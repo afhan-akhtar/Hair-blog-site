@@ -2,14 +2,13 @@
 
 import { useState } from "react";
 import { Send, CheckCircle, AlertCircle } from "lucide-react";
+import { submitWeb3Form } from "@/lib/web3forms";
 
 type FormStatus = "idle" | "loading" | "success" | "error";
 
 export function ContactForm() {
   const [status, setStatus] = useState<FormStatus>("idle");
   const [errorMsg, setErrorMsg] = useState("");
-
-  const accessKey = process.env.NEXT_PUBLIC_WEB3FORMS_KEY;
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -18,32 +17,16 @@ export function ContactForm() {
 
     const form = e.currentTarget;
     const formData = new FormData(form);
+    formData.append("form_type", "contact");
 
-    if (!accessKey) {
+    const result = await submitWeb3Form(formData);
+
+    if (result.success) {
+      setStatus("success");
+      form.reset();
+    } else {
       setStatus("error");
-      setErrorMsg("Form is not configured. Please add NEXT_PUBLIC_WEB3FORMS_KEY to .env");
-      return;
-    }
-
-    formData.append("access_key", accessKey);
-
-    try {
-      const res = await fetch("https://api.web3forms.com/submit", {
-        method: "POST",
-        body: formData,
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        setStatus("success");
-        form.reset();
-      } else {
-        setStatus("error");
-        setErrorMsg(data.message || "Something went wrong. Please try again.");
-      }
-    } catch {
-      setStatus("error");
-      setErrorMsg("Network error. Please check your connection and try again.");
+      setErrorMsg(result.message || "Something went wrong. Please try again.");
     }
   }
 
