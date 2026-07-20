@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/db";
 import { getSession, verifyPassword, hashPassword } from "@/lib/auth";
+import { validateStrongPassword } from "@/lib/password";
 
 export async function PUT(request: NextRequest) {
   const session = await getSession();
@@ -14,8 +15,9 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ error: "Current and new password are required" }, { status: 400 });
   }
 
-  if (newPassword.length < 6) {
-    return NextResponse.json({ error: "New password must be at least 6 characters" }, { status: 400 });
+  const passwordError = validateStrongPassword(newPassword);
+  if (passwordError) {
+    return NextResponse.json({ error: passwordError }, { status: 400 });
   }
 
   const user = await prisma.user.findUnique({ where: { id: session.id } });

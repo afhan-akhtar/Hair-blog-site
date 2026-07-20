@@ -3,6 +3,12 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { KeyRound, CheckCircle2 } from "lucide-react";
+import {
+  getPasswordChecks,
+  PASSWORD_MIN_LENGTH,
+  PASSWORD_REQUIREMENTS_HINT,
+  validateStrongPassword,
+} from "@/lib/password";
 
 export function PasswordChangeForm() {
   const router = useRouter();
@@ -23,8 +29,9 @@ export function PasswordChangeForm() {
       return;
     }
 
-    if (newPassword.length < 6) {
-      setError("New password must be at least 6 characters");
+    const passwordError = validateStrongPassword(newPassword);
+    if (passwordError) {
+      setError(passwordError);
       return;
     }
 
@@ -52,6 +59,9 @@ export function PasswordChangeForm() {
     }
   };
 
+  const passwordChecks = getPasswordChecks(newPassword);
+  const showChecks = newPassword.length > 0;
+
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
@@ -72,8 +82,22 @@ export function PasswordChangeForm() {
           onChange={(e) => setNewPassword(e.target.value)}
           className="admin-input"
           required
-          minLength={6}
+          minLength={PASSWORD_MIN_LENGTH}
+          autoComplete="new-password"
         />
+        <p className="text-xs text-slate-500 mt-2">{PASSWORD_REQUIREMENTS_HINT}</p>
+        {showChecks && (
+          <ul className="mt-3 space-y-1">
+            {passwordChecks.map((check) => (
+              <li
+                key={check.label}
+                className={`text-xs ${check.met ? "text-green-600" : "text-slate-500"}`}
+              >
+                {check.met ? "✓" : "○"} {check.label}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
       <div>
         <label className="admin-label">Confirm New Password</label>
@@ -83,7 +107,8 @@ export function PasswordChangeForm() {
           onChange={(e) => setConfirmPassword(e.target.value)}
           className="admin-input"
           required
-          minLength={6}
+          minLength={PASSWORD_MIN_LENGTH}
+          autoComplete="new-password"
         />
       </div>
 
