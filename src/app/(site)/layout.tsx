@@ -15,7 +15,7 @@ export default async function SiteLayout({
   ]);
 
   return (
-    <div className="bg-cream min-h-screen flex flex-col">
+    <div className="site-theme bg-cream min-h-screen flex flex-col">
       <Header branding={branding} menu={menu} />
       <main className="flex-1">{children}</main>
       <Footer branding={branding} footerMenu={footerMenu} />

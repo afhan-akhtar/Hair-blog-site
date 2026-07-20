@@ -11,6 +11,8 @@
   --color-charcoal: #1a1a1a;
   --color-beige: #f5f0eb;
   --color-mint: #f0f4f2;
+  --color-selection-bg: #c58b85;
+  --color-selection-text: #faf9f6;
   --color-admin-blue: #307fb1;
   --color-admin-blue-dark: #256a94;
   --color-admin-bg: #f4f6f9;
@@ -24,6 +26,16 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
   scroll-behavior: smooth;
+}
+
+.site-theme ::selection {
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-text);
+}
+
+.site-theme ::-moz-selection {
+  background-color: var(--color-selection-bg);
+  color: var(--color-selection-text);
 }
 
 button:not(:disabled),
