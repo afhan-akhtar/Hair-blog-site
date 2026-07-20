@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { Search, ChevronDown, Menu, X } from "lucide-react";
 import type { NavItem } from "@/lib/navigation";
 import type { SiteSettings } from "@/lib/site-settings";
@@ -116,11 +116,15 @@ function MegaMenuPanel({
 
 export function Header({ branding, menu }: HeaderProps) {
   const pathname = usePathname();
+  const router = useRouter();
   const [openMenu, setOpenMenu] = useState<string | null>(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [mobileExpanded, setMobileExpanded] = useState<string | null>(null);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
   const [scrolled, setScrolled] = useState(false);
   const headerRef = useRef<HTMLElement>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   const activeItem = menu.find((item) => item.label === openMenu);
 
@@ -154,7 +158,34 @@ export function Header({ branding, menu }: HeaderProps) {
   useEffect(() => {
     setOpenMenu(null);
     setMobileOpen(false);
+    setSearchOpen(false);
   }, [pathname]);
+
+  useEffect(() => {
+    if (searchOpen) {
+      searchInputRef.current?.focus();
+    }
+  }, [searchOpen]);
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setSearchOpen(false);
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  const handleSearchSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const query = searchQuery.trim();
+    if (!query) return;
+    setSearchOpen(false);
+    setMobileOpen(false);
+    setOpenMenu(null);
+    router.push(`/search?q=${encodeURIComponent(query)}`);
+  };
 
   const handleHeaderMouseLeave = (e: React.MouseEvent) => {
     const related = e.relatedTarget;
@@ -173,6 +204,14 @@ export function Header({ branding, menu }: HeaderProps) {
         <div
           className="hidden lg:block fixed inset-0 top-[76px] bg-black/20 backdrop-blur-[2px] z-40 transition-opacity duration-300 cursor-default"
           onClick={() => setOpenMenu(null)}
+          aria-hidden="true"
+        />
+      )}
+
+      {searchOpen && (
+        <div
+          className="fixed inset-0 top-[76px] bg-black/20 backdrop-blur-[2px] z-40 cursor-default"
+          onClick={() => setSearchOpen(false)}
           aria-hidden="true"
         />
       )}
@@ -269,9 +308,19 @@ export function Header({ branding, menu }: HeaderProps) {
               <button
                 type="button"
                 aria-label="Search"
-                className="p-2.5 rounded-full border border-black/10 hover:border-terracotta/50 hover:bg-terracotta/10 hover:scale-105 transition-all duration-300 cursor-pointer"
+                aria-expanded={searchOpen}
+                onClick={() => {
+                  setSearchOpen((open) => !open);
+                  setOpenMenu(null);
+                }}
+                className={cn(
+                  "p-2.5 rounded-full border transition-all duration-300 cursor-pointer",
+                  searchOpen
+                    ? "border-terracotta bg-terracotta/10 text-terracotta"
+                    : "border-black/10 hover:border-terracotta/50 hover:bg-terracotta/10 hover:scale-105 text-charcoal"
+                )}
               >
-                <Search className="w-4 h-4 text-charcoal" strokeWidth={1.75} />
+                <Search className="w-4 h-4" strokeWidth={1.75} />
               </button>
               <button
                 type="button"
@@ -284,6 +333,40 @@ export function Header({ branding, menu }: HeaderProps) {
             </div>
           </div>
         </div>
+
+        {searchOpen && (
+          <div className="absolute left-0 right-0 top-full z-50 border-t border-black/5 bg-white/98 backdrop-blur-lg shadow-lg animate-dropdown-in">
+            <div className="site-container py-5">
+              <form onSubmit={handleSearchSubmit} className="flex items-center gap-3">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <input
+                    ref={searchInputRef}
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search hair tips, styles, and stories..."
+                    className="w-full h-12 pl-11 pr-4 rounded-xl border border-black/10 bg-cream text-sm text-charcoal placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-terracotta/30 focus:border-terracotta/30"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="h-12 px-6 bg-charcoal text-white rounded-xl text-sm font-semibold hover:bg-plum transition-colors"
+                >
+                  Search
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setSearchOpen(false)}
+                  aria-label="Close search"
+                  className="p-2.5 rounded-full hover:bg-black/5 transition-colors"
+                >
+                  <X className="w-5 h-5 text-charcoal" />
+                </button>
+              </form>
+            </div>
+          </div>
+        )}
 
         {activeItem?.mega && (
           <div className="hidden lg:block absolute left-0 right-0 top-full z-50">
@@ -298,6 +381,26 @@ export function Header({ branding, menu }: HeaderProps) {
 
         {mobileOpen && (
           <div className="lg:hidden border-t border-black/5 bg-white/98 backdrop-blur-lg max-h-[80vh] overflow-y-auto animate-dropdown-in">
+            <div className="px-5 py-4 border-b border-black/5">
+              <form onSubmit={handleSearchSubmit} className="flex items-center gap-2">
+                <div className="relative flex-1">
+                  <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
+                  <input
+                    type="search"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search stories..."
+                    className="w-full h-11 pl-10 pr-3 rounded-xl border border-black/10 bg-cream text-sm focus:outline-none focus:ring-2 focus:ring-terracotta/30"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="h-11 px-4 bg-charcoal text-white rounded-xl text-sm font-semibold"
+                >
+                  Go
+                </button>
+              </form>
+            </div>
             <nav className="px-5 py-4 space-y-1">
               {menu.map((item) => (
                 <div key={item.label}>
