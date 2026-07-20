@@ -94,16 +94,16 @@ export function AdminSidebar({ user, collapsed, mobileOpen, onNavigate }: AdminS
     <aside
       className={cn(
         "admin-sidebar flex flex-col h-screen fixed top-0 left-0 z-50 transition-all duration-300 ease-in-out",
-        collapsed ? "w-[72px]" : "w-64",
+        mobileOpen ? "w-64" : collapsed ? "w-[72px]" : "w-64",
         mobileOpen ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
       )}
     >
-      <div className={cn("border-b border-white/10", collapsed ? "p-4" : "p-5")}>
+      <div className={cn("border-b border-white/10", collapsed && !mobileOpen ? "p-4" : "p-5")}>
         <Link href="/admin" onClick={onNavigate} className="flex items-center gap-2.5 group">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-sky-400 to-blue-600 flex items-center justify-center shadow-lg shadow-blue-500/20 group-hover:scale-105 transition-transform shrink-0">
             <Sparkles className="w-4 h-4 text-white" />
           </div>
-          {!collapsed && (
+          {(!collapsed || mobileOpen) && (
             <div>
               <span className="font-serif text-lg font-bold text-white block leading-tight">Hair Edit</span>
               <span className="text-[10px] uppercase tracking-widest text-white/40">Admin Panel</span>
@@ -124,24 +124,24 @@ export function AdminSidebar({ user, collapsed, mobileOpen, onNavigate }: AdminS
             return (
               <div key={item.href}>
                 <button
-                  onClick={() => !collapsed && setPostsOpen(!postsOpen)}
-                  title={collapsed ? item.label : undefined}
+                  onClick={() => (!collapsed || mobileOpen) && setPostsOpen(!postsOpen)}
+                  title={collapsed && !mobileOpen ? item.label : undefined}
                   className={cn(
                     "admin-nav-item w-full",
-                    !collapsed && "justify-between",
-                    collapsed && "justify-center px-0",
+                    !collapsed || mobileOpen ? "justify-between" : "justify-center px-0",
+                    collapsed && !mobileOpen && "justify-center px-0",
                     isActive && "admin-nav-item-active"
                   )}
                 >
-                  <span className={cn("flex items-center gap-3", collapsed && "justify-center")}>
+                  <span className={cn("flex items-center gap-3", collapsed && !mobileOpen && "justify-center")}>
                     <Icon className="w-4 h-4 shrink-0" />
-                    {!collapsed && item.label}
+                    {(!collapsed || mobileOpen) && item.label}
                   </span>
-                  {!collapsed && (
+                  {(!collapsed || mobileOpen) && (
                     <ChevronDown className={cn("w-4 h-4 transition-transform opacity-60", postsOpen && "rotate-180")} />
                   )}
                 </button>
-                {postsOpen && !collapsed && (
+                {postsOpen && (!collapsed || mobileOpen) && (
                   <div className="ml-4 mt-1 space-y-0.5 border-l border-white/10 pl-3">
                     {item.children.map((child) => (
                       <Link
@@ -169,33 +169,33 @@ export function AdminSidebar({ user, collapsed, mobileOpen, onNavigate }: AdminS
               key={item.href}
               href={item.href}
               onClick={onNavigate}
-              title={collapsed ? item.label : undefined}
+              title={collapsed && !mobileOpen ? item.label : undefined}
               className={cn(
                 "admin-nav-item",
-                collapsed && "justify-center px-0",
+                collapsed && !mobileOpen && "justify-center px-0",
                 isActive && "admin-nav-item-active"
               )}
             >
               <Icon className="w-4 h-4 shrink-0" />
-              {!collapsed && item.label}
+              {(!collapsed || mobileOpen) && item.label}
             </Link>
           );
         })}
       </nav>
 
-      <div className={cn("border-t border-white/10 space-y-3", collapsed ? "p-3" : "p-4")}>
-        <div className={cn("flex items-center gap-3", collapsed ? "justify-center px-0" : "px-2")}>
+      <div className={cn("border-t border-white/10 space-y-3", collapsed && !mobileOpen ? "p-3" : "p-4")}>
+        <div className={cn("flex items-center gap-3", collapsed && !mobileOpen ? "justify-center px-0" : "px-2")}>
           <div className="w-9 h-9 rounded-full bg-gradient-to-br from-rose-400 to-plum flex items-center justify-center text-white text-sm font-bold shrink-0">
             {user.name[0]}
           </div>
-          {!collapsed && (
+          {(!collapsed || mobileOpen) && (
             <div className="flex-1 min-w-0">
               <p className="text-sm font-medium text-white truncate">{user.name}</p>
               <p className="text-xs text-white/40 capitalize truncate">{user.role}</p>
             </div>
           )}
         </div>
-        {!collapsed && (
+        {(!collapsed || mobileOpen) && (
           <>
             <Link
               href="/"

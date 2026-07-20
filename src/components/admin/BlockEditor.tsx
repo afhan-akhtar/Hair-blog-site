@@ -142,7 +142,7 @@ function BlockInserter({
         <button onClick={onClose} className="text-gray-400 hover:text-gray-600 text-sm">Cancel</button>
       </div>
       <p className="text-xs text-gray-500 mb-2 font-medium">Standard Blocks</p>
-      <div className="grid grid-cols-3 md:grid-cols-5 gap-2 mb-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2 mb-3">
         {STANDARD_BLOCKS.map((type) => (
           <button key={type} onClick={() => onSelect(type)} className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-white transition-colors text-center border border-transparent hover:border-blue-200">
             <span className="text-lg">{BLOCK_ICONS[type]}</span>
@@ -151,7 +151,7 @@ function BlockInserter({
         ))}
       </div>
       <p className="text-xs text-gray-500 mb-2 font-medium">Custom Blog Blocks</p>
-      <div className="grid grid-cols-3 md:grid-cols-4 gap-2">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
         {CUSTOM_BLOCKS.map((type) => (
           <button key={type} onClick={() => onSelect(type)} className="flex flex-col items-center gap-1 p-3 rounded-lg hover:bg-white transition-colors text-center border border-transparent hover:border-blue-200">
             <span className="text-lg">{BLOCK_ICONS[type]}</span>

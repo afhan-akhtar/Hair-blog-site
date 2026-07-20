@@ -101,14 +101,14 @@ export function PostsTable({ posts, categories, users, canPublish = true }: Post
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-6">
         <div>
           <h1 className="admin-section-title">Posts</h1>
           <p className="text-gray-500 text-sm mt-1">Manage all blog posts</p>
         </div>
         <Link
           href="/admin/posts/new"
-          className="flex items-center gap-2 px-4 py-2.5 bg-admin-blue text-white rounded-lg text-sm font-medium hover:bg-admin-blue-dark transition-colors"
+          className="flex items-center justify-center gap-2 px-4 py-2.5 bg-admin-blue text-white rounded-lg text-sm font-medium hover:bg-admin-blue-dark transition-colors w-full sm:w-auto"
         >
           <Plus className="w-4 h-4" /> Add New
         </Link>
@@ -170,7 +170,7 @@ export function PostsTable({ posts, categories, users, canPublish = true }: Post
         )}
       </div>
 
-      <div className="admin-card overflow-hidden">
+      <div className="admin-card overflow-hidden admin-table-wrap">
         <div className="overflow-x-auto">
           <table className="admin-table w-full">
             <thead>

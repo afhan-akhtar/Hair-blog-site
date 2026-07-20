@@ -171,31 +171,32 @@ export function PostEditor({ post, categories, users, canPublish = true, current
   const labelClass = "text-xs uppercase tracking-wider text-gray-500 mb-1.5 block font-medium";
 
   return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center justify-between px-6 py-3 border-b border-gray-200 bg-white sticky top-0 z-10">
-        <div className="flex items-center gap-3">
-          <Link href="/admin/posts" className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+    <div className="flex flex-col lg:h-[calc(100dvh-3.25rem)]">
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-4 sm:px-6 py-3 border-b border-gray-200 bg-white sticky top-0 z-10">
+        <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+          <Link href="/admin/posts" className="p-2 rounded-lg hover:bg-gray-100 transition-colors shrink-0">
             <ArrowLeft className="w-4 h-4 text-gray-600" />
           </Link>
-          <span className="text-sm text-gray-500">{isEditing ? "Edit Post" : "Add New Post"}</span>
+          <span className="text-sm text-gray-500 truncate">{isEditing ? "Edit Post" : "Add New Post"}</span>
           {lastSaved && (
-            <span className="text-xs text-green-600">Saved {lastSaved.toLocaleTimeString()}</span>
+            <span className="text-xs text-green-600 hidden sm:inline">Saved {lastSaved.toLocaleTimeString()}</span>
           )}
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap sm:flex-nowrap">
           {isEditing && (
             <Link
               href={`/blog/${slug}`}
               target="_blank"
               className="flex items-center gap-1.5 px-3 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-lg transition-colors"
             >
-              <Eye className="w-4 h-4" /> Preview
+              <Eye className="w-4 h-4" />
+              <span className="hidden sm:inline">Preview</span>
             </Link>
           )}
           <button
             onClick={() => handleSave("draft")}
             disabled={saving}
-            className="admin-btn-secondary"
+            className="admin-btn-secondary flex-1 sm:flex-none text-sm"
           >
             Save Draft
           </button>
@@ -203,7 +204,7 @@ export function PostEditor({ post, categories, users, canPublish = true, current
             <button
               onClick={() => handleSave("published")}
               disabled={saving || !title}
-              className="admin-btn-primary flex items-center gap-2"
+              className="admin-btn-primary flex items-center justify-center gap-2 flex-1 sm:flex-none text-sm"
             >
               <Save className="w-4 h-4" />
               {saving ? "Saving..." : status === "published" ? "Update" : "Publish"}
@@ -212,14 +213,14 @@ export function PostEditor({ post, categories, users, canPublish = true, current
         </div>
       </div>
 
-      <div className="flex flex-1 overflow-hidden">
-        <div className="flex-1 overflow-y-auto p-8 bg-white">
+      <div className="flex flex-col lg:flex-row flex-1 lg:min-h-0 lg:overflow-hidden">
+        <div className="flex-1 lg:overflow-y-auto p-4 sm:p-6 lg:p-8 bg-white min-w-0">
           <input
             type="text"
             value={title}
             onChange={(e) => handleTitleChange(e.target.value)}
             placeholder="Post title"
-            className="w-full text-3xl font-bold bg-transparent placeholder:text-gray-300 outline-none mb-2 font-serif"
+            className="w-full text-2xl sm:text-3xl font-bold bg-transparent placeholder:text-gray-300 outline-none mb-2 font-serif"
           />
           <input
             type="text"
@@ -238,13 +239,13 @@ export function PostEditor({ post, categories, users, canPublish = true, current
           <BlockEditor blocks={blocks} onChange={setBlocks} />
         </div>
 
-        <div className="w-80 border-l border-gray-200 bg-gray-50 overflow-y-auto">
-          <div className="flex flex-wrap border-b border-gray-200 bg-white">
+        <div className="w-full lg:w-80 shrink-0 border-t lg:border-t-0 lg:border-l border-gray-200 bg-gray-50 lg:overflow-y-auto">
+          <div className="flex overflow-x-auto border-b border-gray-200 bg-white admin-scroll-x">
             {sidebarSections.map((s) => (
               <button
                 key={s.key}
                 onClick={() => setActiveSection(s.key)}
-                className={`px-3 py-2.5 text-xs font-medium transition-colors ${
+                className={`px-3 py-2.5 text-xs font-medium transition-colors whitespace-nowrap shrink-0 ${
                   activeSection === s.key
                     ? "text-admin-blue border-b-2 border-admin-blue"
                     : "text-gray-500 hover:text-gray-700"

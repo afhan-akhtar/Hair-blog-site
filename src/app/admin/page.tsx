@@ -66,7 +66,7 @@ export default async function AdminDashboard() {
   ];
 
   return (
-    <div className="p-6 lg:p-8 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto">
       <div className="mb-8">
         <h1 className="text-2xl font-bold text-gray-900">
           Welcome back, {session?.name?.split(" ")[0]}
@@ -118,12 +118,12 @@ export default async function AdminDashboard() {
         </div>
       )}
 
-      <div className="admin-card overflow-hidden">
-        <div className="flex items-center justify-between p-5 border-b border-gray-100">
+      <div className="admin-card overflow-hidden admin-table-wrap">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between p-4 sm:p-5 border-b border-gray-100">
           <h2 className="font-semibold text-gray-900">
             {isCollaborator ? "My Recent Drafts" : "Recent Posts"}
           </h2>
-          <Link href="/admin/posts/new" className="admin-btn-primary text-sm">
+          <Link href="/admin/posts/new" className="admin-btn-primary text-sm text-center w-full sm:w-auto">
             Add New
           </Link>
         </div>

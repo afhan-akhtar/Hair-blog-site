@@ -29,7 +29,7 @@ export default async function PostsPage() {
   }));
 
   return (
-    <div className="p-6 lg:p-8">
+    <div className="p-4 sm:p-6 lg:p-8">
       <Suspense fallback={<div>Loading...</div>}>
         <PostsTable
           posts={serialized}

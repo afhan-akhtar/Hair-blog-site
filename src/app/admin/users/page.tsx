@@ -27,8 +27,8 @@ export default async function UsersPage() {
   });
 
   return (
-    <div className="p-6 lg:p-8 max-w-5xl mx-auto">
-      <div className="flex items-center justify-between mb-8">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-5xl mx-auto">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Team & Permissions</h1>
           <p className="text-gray-500 text-sm mt-1">Manage administrators and collaborators</p>
