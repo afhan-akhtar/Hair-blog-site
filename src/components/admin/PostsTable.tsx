@@ -39,11 +39,20 @@ interface PostsTableProps {
 export function PostsTable({ posts, categories, users, canPublish = true }: PostsTableProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
+  const statusFilter = searchParams.get("status") || "";
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const [statusFilter, setStatusFilter] = useState(searchParams.get("status") || "");
   const [categoryFilter, setCategoryFilter] = useState("");
   const [authorFilter, setAuthorFilter] = useState("");
+
+  const updateStatusFilter = (value: string) => {
+    setSelected([]);
+    const params = new URLSearchParams(searchParams.toString());
+    if (value) params.set("status", value);
+    else params.delete("status");
+    const query = params.toString();
+    router.push(query ? `/admin/posts?${query}` : "/admin/posts");
+  };
 
   const filtered = posts.filter((post) => {
     if (statusFilter === "trash") {
@@ -116,7 +125,11 @@ export function PostsTable({ posts, categories, users, canPublish = true }: Post
             className="w-full pl-9 pr-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-admin-blue/30"
           />
         </div>
-        <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)} className="px-3 py-2 border border-gray-200 rounded-lg text-sm">
+        <select
+          value={statusFilter}
+          onChange={(e) => updateStatusFilter(e.target.value)}
+          className="px-3 py-2 border border-gray-200 rounded-lg text-sm"
+        >
           <option value="">All Statuses</option>
           <option value="draft">Draft</option>
           <option value="review">Pending Review</option>

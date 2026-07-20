@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { usePathname } from "next/navigation";
 import { AdminSidebar } from "@/components/admin/AdminSidebar";
 import { AdminTopBar } from "@/components/admin/AdminTopBar";
@@ -53,12 +53,14 @@ export function AdminShell({ children, user }: AdminShellProps) {
         />
       )}
 
-      <AdminSidebar
-        user={user}
-        collapsed={collapsed}
-        mobileOpen={mobileOpen}
-        onNavigate={() => setMobileOpen(false)}
-      />
+      <Suspense fallback={null}>
+        <AdminSidebar
+          user={user}
+          collapsed={collapsed}
+          mobileOpen={mobileOpen}
+          onNavigate={() => setMobileOpen(false)}
+        />
+      </Suspense>
 
       <div
         className={cn(

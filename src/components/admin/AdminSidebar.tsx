@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import {
   LayoutDashboard,
   FileText,
@@ -69,10 +69,20 @@ interface AdminSidebarProps {
 
 export function AdminSidebar({ user, collapsed, mobileOpen, onNavigate }: AdminSidebarProps) {
   const pathname = usePathname();
+  const searchParams = useSearchParams();
   const router = useRouter();
-  const [postsOpen, setPostsOpen] = useState(pathname.startsWith("/admin/posts"));
+  const [postsOpen, setPostsOpen] = useState(false);
   const isAdmin = user.role === "administrator";
   const mainNav = filterAdminNav(isAdmin ? adminNav : collaboratorNav, isAdmin);
+
+  const currentUrl = searchParams.toString()
+    ? `${pathname}?${searchParams.toString()}`
+    : pathname;
+
+  const isChildActive = (href: string) => {
+    if (href.includes("?")) return currentUrl === href;
+    return pathname === href && !searchParams.get("status");
+  };
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -140,7 +150,7 @@ export function AdminSidebar({ user, collapsed, mobileOpen, onNavigate }: AdminS
                         onClick={onNavigate}
                         className={cn(
                           "block px-3 py-2 rounded-lg text-sm transition-all",
-                          pathname === child.href.split("?")[0]
+                          isChildActive(child.href)
                             ? "text-sky-300 bg-white/10 font-medium"
                             : "text-white/50 hover:text-white hover:bg-white/5"
                         )}
